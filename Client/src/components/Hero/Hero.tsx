@@ -2,7 +2,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import banner1 from "../../assets/Bnners/banner-1.webp";
 
-const Hero: React.FC = () => {
+interface MediaProps {
+  media: any,
+}
+const Hero: React.FC<MediaProps> = ({ media }) => {
+
   return (
     <motion.div className="relative"
     initial={{ opacity: 0, y: 20 }}
@@ -11,9 +15,9 @@ const Hero: React.FC = () => {
     >
       <div className="w-full h-screen bg-cover bg-center relative">
         <img
-          src={banner1}
+          src={media?.backdrop_path ? `https://image.tmdb.org/t/p/original${media.backdrop_path}` : banner1}
           alt="Banner"
-          className="w-full h-full object-cover opacity-90"
+          className="w-full h-full object-cover opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
       </div>

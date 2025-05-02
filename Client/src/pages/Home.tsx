@@ -9,7 +9,7 @@ const Home:React.FC = () => {
     <>
    
     <Navbar />
-    <Hero />
+    <Hero media={{ backdrop_path: null }} />
     <Content />
     <Footer />
     </>

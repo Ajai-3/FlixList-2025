@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import StarIcon from "@mui/icons-material/Star";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { languageMap } from "../../constants/LanguageMap.ts";
+import { useNavigate } from "react-router-dom";
 
 interface MovieCardProps {
   movie: {
@@ -19,6 +20,8 @@ interface MovieCardProps {
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
+  const navigate = useNavigate()
+
   const rating = parseFloat(movie.vote_average);
   let ratingColor: string;
 
@@ -31,9 +34,22 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   } else {
     ratingColor = "text-red-500";
   }
+  const getType = (media: any): 'movie' | 'series' | 'anime' => {
+    if (media.title || media.release_date) {
+      return 'movie';
+    }
+  
+    return 'series'; 
+  };
+
+  const handleDetails = () => {
+    const type = getType(movie)
+    navigate(`/media/${type}/${movie.id}`)
+  }
 
   return (
     <motion.div
+    onClick={handleDetails}
       className="relative shrink-0 rounded-xl cursor-pointer"
       onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = "0 10px 20px rgba(0, 255, 0, 0.5)";
@@ -51,7 +67,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     >
       <div className="overflow-hidden rounded-xl">
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
           alt=""
           className="w-56 h-80 rounded-xl object-cover"
         />
