@@ -63,7 +63,7 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
         {/* Actual Image */}
         {!imageError && season.poster_path ? (
           <motion.img
-            src={`https://image.tmdb.org/t/p/w780${season.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w300${season.poster_path}`}
             className="absolute inset-0 w-full h-full object-cover"
             alt={seasonDisplayName}
             onLoad={handleImageLoad}

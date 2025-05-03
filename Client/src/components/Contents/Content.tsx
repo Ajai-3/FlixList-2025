@@ -105,17 +105,17 @@ const Content: React.FC = () => {
       {mediaSections.map((section, i) => (
         <motion.div
           key={i}
-          // initial={{ opacity: 0, y: 20 }}
-          // whileInView={{
-          //   opacity: 1,
-          //   y: 0,
-          // }}
-          // viewport={{ once: false, amount: 0.2 }}
-          // transition={{
-          //   duration: 0.5,
-          //   type: "spring",
-          //   stiffness: 200,
-          // }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{
+            duration: 0.5,
+            type: "spring",
+            stiffness: 200,
+          }}
         >
           <div className="flex justify-between items-center">
             <h1 className="text-3xl mx-4 font-semibold">{section.heading}</h1>

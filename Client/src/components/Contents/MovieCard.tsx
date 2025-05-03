@@ -97,7 +97,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           </motion.div>
         )}
 
-        {/* Main Image with Smooth Transition */}
+
         <motion.div
           className="relative w-full h-80"
           initial={{ opacity: 0 }}
@@ -139,7 +139,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           whileTap={{ scale: 0.9 }}
           onClick={(e) => {
             e.stopPropagation();
-            // Add to bookmarks logic here
+
           }}
           initial={{ opacity: 0 }}
           animate={{ 
@@ -150,7 +150,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           <BookmarksIcon className="text-white" fontSize="small" />
         </motion.div>
 
-        {/* Movie Info */}
+
         <motion.div
           className="absolute bottom-0 left-0 right-0 m-2 z-10"
           initial={{ y: 20, opacity: 0 }}

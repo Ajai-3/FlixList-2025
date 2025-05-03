@@ -7,11 +7,13 @@ interface MediaDetailsProps {
   }
 const Series: React.FC<MediaDetailsProps> = ({ media }) => {
   return (
-    <div className='flex gap-6 justify-start px-32'>
-       {media.seasons.map((season, i) => (
+   <div className='px-28'>
+     <div className='flex gap-6 justify-start px-4 overflow-auto scrollbar-hidden py-4'>
+       {media.seasons.map((season: any, i: any) => (
         <SeriesDiv key={season.id || i} season={season} />
     ))}
     </div>
+   </div>
   )
 }
 

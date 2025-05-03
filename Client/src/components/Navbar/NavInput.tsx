@@ -1,14 +1,28 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { searchMedia } from "../../api/SearchMedia";
 import { languageMap } from "../../constants/LanguageMap";
 import { getRatingColor } from "../../utils/getRatingColor";
+import { useNavigate } from "react-router-dom";
 
 const NavInput: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleResultClick = useCallback((mediaType: string, id: number) => {
+    // setSearchQuery("");
+    setResults([]);
+    setHasSearched(false);
+    navigate(`/media/${mediaType === "tv" ? "series" : "movie"}/${id}`);
+  }, [navigate]);
 
 
   useEffect(() => {
@@ -29,31 +43,39 @@ const NavInput: React.FC = () => {
         setResults([]);
         setHasSearched(false);
       }
-    }, 200); 
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setSearchQuery("");
+        setHasSearched(false);
+        setResults([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
 
   const filteredResults = useMemo(() => (
     results.filter(media => media.poster_path)
+      .sort((a, b) => b.popularity - a.popularity)
+      .slice(0, 15) 
   ), [results]);
 
+  // Animation variants
   const inputVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.3,
-        delay: 0.1,
-        type: "spring",
-        stiffness: 200
-      }
+      transition: { duration: 0.3, delay: 0.1, type: "spring", stiffness: 200 }
     },
     focus: {
       scale: 1.03,
@@ -64,22 +86,36 @@ const NavInput: React.FC = () => {
   };
 
   return (
-    <div className="relative">
-      <motion.input
+    <div className="relative" ref={wrapperRef}>
+      <motion.div
         initial="hidden"
         animate="visible"
-        whileFocus="focus"
-        variants={inputVariants}
-        className="bg-black/70 relative outline-none border border-gray-500 p-[10px] rounded-md w-96"
-        type="text"
-        placeholder="Search...."
-        value={searchQuery}
-        onChange={handleSearch}
-      />
-      
-      {(searchQuery && (filteredResults.length > 0 || hasSearched)) && (
-        <motion.div 
-          className="absolute scrollbar-hidden bg-black/90 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50 cursor-pointer"
+        className="relative"
+      >
+        <motion.input
+          whileFocus="focus"
+          variants={inputVariants}
+          className="bg-black/70 relative outline-none border border-gray-500 p-[10px] rounded-md w-96"
+          type="text"
+          placeholder="Search...."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+        {isLoading && (
+          <motion.div
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="w-5 h-5 border-2 border-main-color-2 border-t-transparent rounded-full animate-spin"></div>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {searchQuery && (filteredResults.length > 0 || hasSearched) && (
+        <motion.div
+          className="absolute scrollbar-hidden bg-black/90 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
@@ -91,12 +127,13 @@ const NavInput: React.FC = () => {
             </div>
           ) : filteredResults.length > 0 ? (
             filteredResults.map((media) => (
-              <motion.div 
+              <motion.div
                 key={`${media.id}-${media.media_type}`}
-                className="flex gap-4 p-3 hover:bg-gray-800/50 transition-colors"
+                className="flex gap-4 p-3 hover:bg-gray-800/50 transition-colors cursor-pointer"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
+                onClick={() => handleResultClick(media.media_type, media.id)}
               >
                 <div className="w-24 shrink-0">
                   <img
@@ -104,6 +141,9 @@ const NavInput: React.FC = () => {
                     className="w-24 h-32 object-cover rounded-md"
                     alt={media.name || media.title}
                     loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/placeholder-poster.jpg';
+                    }}
                   />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -111,7 +151,8 @@ const NavInput: React.FC = () => {
                     {media.name || media.title}
                   </p>
                   <p className="text-gray-400 text-xs mb-1">
-                    {media.media_type} • {media.first_air_date?.split("-")[0] ||
+                    {media.media_type} •{" "}
+                    {media.first_air_date?.split("-")[0] ||
                       media.release_date?.split("-")[0] ||
                       "Unknown"}
                   </p>
@@ -119,7 +160,7 @@ const NavInput: React.FC = () => {
                     <span className={`text-xs px-2 py-1 rounded-full font-semibold ${getRatingColor(media.vote_average)}`}>
                       {media.vote_average.toFixed(1)}
                     </span>
-                    <span className="text-xs bg-white/20 px-2  rounded-full">
+                    <span className="text-xs bg-white/20 px-2 rounded-full">
                       {languageMap[media.original_language] || media.original_language}
                     </span>
                   </div>
