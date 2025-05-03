@@ -122,7 +122,11 @@ const Details: React.FC<MediaProps> = ({ media }) => {
             {media.first_air_date && (
               <div className="flex gap-4">
                 <p className="px-2 bg-white/50 rounded-full">
-                  {media.seasons.length} Season
+                  {
+                    media.seasons.filter((s: any) => s.season_number !== 0 && s.episode_count !== 0)
+                      .length
+                  }{" "}
+                  Season
                 </p>
                 <p className="px-2 bg-white/50 rounded-full">
                   {totalEpisods} Episods
@@ -132,7 +136,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
           </div>
         </div>
         <div className="text-md tracking-wider font-light text-gray-400">
-          <p>{media.overview}</p>
+          <p>{media.overview.length > 750 ? media.overview.slice(0, 750) + '...' : media.overview}</p>
         </div>
       </div>
       <div></div>

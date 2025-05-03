@@ -6,6 +6,7 @@ import Footer from "../components/Footer/Footer";
 import Hero from "../components/Hero/Hero";
 import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
+import Series from "../components/Media/Series";
 
 
 const MediaDetail: React.FC = () => {
@@ -43,7 +44,8 @@ const MediaDetail: React.FC = () => {
 
       <Hero media={media} />
       <Details media={media} />
-      <MediaMetaInfo media={media} />
+      {/* <MediaMetaInfo media={media} /> */}
+      {media.seasons ? <Series media={media} /> : ''}
       <Footer />
     </div>
   );
