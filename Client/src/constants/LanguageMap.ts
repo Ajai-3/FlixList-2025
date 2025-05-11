@@ -43,6 +43,7 @@ export const languageMap: { [key: string]: string } = {
     chr: "Cherokee",
     chy: "Cheyenne",
     ckb: "Kurdish (Sorani)",
+    cn: "Chinese",
     co: "Corsican",
     cr: "Cree",
     crn: "Montenegrin",

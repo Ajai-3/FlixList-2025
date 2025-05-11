@@ -7,9 +7,9 @@ interface MetaData {
 
 const MetaInfoDiv: React.FC<MetaData> = ({ name, value }) => {
   return (
-    <div className="mb-2">
+    <div className="mb-4">
       <h1 className="font-semibold text-gray-400">{name}</h1>
-      <div className="font-light text-sm">{value}</div>
+      <div className="text-xl font-medium">{value}</div>
     </div>
   );
 };

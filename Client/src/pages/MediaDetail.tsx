@@ -27,6 +27,7 @@ const MediaDetail: React.FC = () => {
         }
         if (response) {
           setMedia(response.data);
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching media details:", error);
@@ -55,8 +56,8 @@ const MediaDetail: React.FC = () => {
           <Navbar />
           <Hero media={media} />
           <Details media={media} />
-          {media.seasons ? <Series media={media} /> : ""}
           <MediaMetaInfo media={media} />
+          {media.seasons ? <Series media={media} /> : ""}
           <Footer />
         </div>
       )}
