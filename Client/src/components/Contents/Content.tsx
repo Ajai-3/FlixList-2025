@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import MovieCard from "./MovieCard";
 import { motion } from "framer-motion";
 import LeftArrowButton from "./LeftArrowButton";
@@ -36,15 +36,52 @@ const Content: React.FC = () => {
     anime: true,
   });
 
+  const nowPlayingRef = useRef<HTMLDivElement>(null);
+  const topMoviesRef = useRef<HTMLDivElement>(null);
+  const seriesRef = useRef<HTMLDivElement>(null);
+  const animeRef = useRef<HTMLDivElement>(null);
+
+const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivElement | null>) => {
+  if (ref.current) {
+    const cardWidth = 224;
+    const gap = 40;        
+    const cardsPerScroll = 3;
+
+    const scrollAmount = (cardWidth + gap) * cardsPerScroll;
+
+    ref.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  }
+};
+
+
   const mediaSections = [
     {
       heading: "Popular Movies",
       data: nowPlaying,
       loading: loading.nowPlaying,
+      ref: nowPlayingRef,
     },
-    { heading: "Top Trending", data: topMovies, loading: loading.topMovies },
-    { heading: "Top Series to Watch", data: series, loading: loading.series },
-    { heading: "Anime Picks for You", data: anime, loading: loading.anime },
+    {
+      heading: "Top Trending",
+      data: topMovies,
+      loading: loading.topMovies,
+      ref: topMoviesRef,
+    },
+    {
+      heading: "Top Series to Watch",
+      data: series,
+      loading: loading.series,
+      ref: seriesRef,
+    },
+    {
+      heading: "Anime Picks for You",
+      data: anime,
+      loading: loading.anime,
+      ref: animeRef,
+    },
   ];
 
   useEffect(() => {
@@ -122,13 +159,21 @@ const Content: React.FC = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl mx-4 font-semibold">{section.heading}</h1>
             <div className="flex gap-2">
-              <LeftArrowButton onClick={() => scroll("left")} />
-              <RightArrowButton onClick={() => scroll("right")} />
+              <LeftArrowButton
+                onClick={() => handleScroll("left", section.ref)}
+              />
+              <RightArrowButton
+                onClick={() => handleScroll("right", section.ref)}
+              />
               <ViewAllButton />
             </div>
           </div>
-          <div className="overflow-x-auto scrollbar-hidden">
-            <div className="flex gap-10 mt-4 mx-4 mb-20 w-max">
+          <div className="relative">
+            <div
+              ref={section.ref}
+              className="flex gap-10 mt-4 mx-4 p-4 mb-20 overflow-x-auto scrollbar-hidden"
+              style={{ scrollBehavior: "smooth" }}
+            >
               {section.loading ? (
                 Array(6)
                   .fill(0)

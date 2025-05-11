@@ -63,7 +63,7 @@ const MediaDetail: React.FC = () => {
             <MediaMetaInfo media={media} />
             {media.seasons ? <Series media={media} /> : ""}
             <Cast cast={cast} />
-          <Footer />
+          <Footer media={media} />
         </div>
       )}
     </motion.div>
