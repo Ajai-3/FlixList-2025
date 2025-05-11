@@ -60,7 +60,7 @@ const MediaMetaInfo: React.FC<MediaDetailsProps> = ({ media }) => {
     crew.writers.length > 0 ? crew.writers : ["No writer information"];
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center mb-6">
       <div className="min-[300px]">
         <h1 className="text-3xl font-medium mb-4 self-start">Details</h1>
         <div className="flex gap-16">

@@ -37,7 +37,11 @@ const Content: React.FC = () => {
   });
 
   const mediaSections = [
-    { heading: "Popular Movies", data: nowPlaying, loading: loading.nowPlaying },
+    {
+      heading: "Popular Movies",
+      data: nowPlaying,
+      loading: loading.nowPlaying,
+    },
     { heading: "Top Trending", data: topMovies, loading: loading.topMovies },
     { heading: "Top Series to Watch", data: series, loading: loading.series },
     { heading: "Anime Picks for You", data: anime, loading: loading.anime },
@@ -59,17 +63,16 @@ const Content: React.FC = () => {
           ]);
 
         setNowPlaying(shuffleArray(nowPlayingRes.data.results as Movie[]));
-        setLoading(prev => ({ ...prev, nowPlaying: false }));
+        setLoading((prev) => ({ ...prev, nowPlaying: false }));
 
         setTopMovies(shuffleArray(topMoviesRes.data.results as Movie[]));
-        setLoading(prev => ({ ...prev, topMovies: false }));
+        setLoading((prev) => ({ ...prev, topMovies: false }));
 
         setSeries(shuffleArray(seriesRes.data.results as Movie[]));
-        setLoading(prev => ({ ...prev, series: false }));
+        setLoading((prev) => ({ ...prev, series: false }));
 
         setAnime(shuffleArray(animeRes.data.results as Movie[]));
-        setLoading(prev => ({ ...prev, anime: false }));
-
+        setLoading((prev) => ({ ...prev, anime: false }));
       } catch (err) {
         console.error("Error fetching data: ", err);
         setLoading({
@@ -89,7 +92,6 @@ const Content: React.FC = () => {
     <div className="relative shrink-0 rounded-xl w-56 h-80 bg-gray-800 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 animate-pulse" />
       <div className="absolute bottom-0 left-0 right-0 m-2">
-      
         <div className="flex gap-2">
           <div className="h-4 bg-gray-700 rounded-full w-1/4 animate-pulse" />
           <div className="h-4 bg-gray-700 rounded-full w-1/4 animate-pulse" />
@@ -120,17 +122,19 @@ const Content: React.FC = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl mx-4 font-semibold">{section.heading}</h1>
             <div className="flex gap-2">
-              <LeftArrowButton />
-              <RightArrowButton />
+              <LeftArrowButton onClick={() => scroll("left")} />
+              <RightArrowButton onClick={() => scroll("right")} />
               <ViewAllButton />
             </div>
           </div>
           <div className="overflow-x-auto scrollbar-hidden">
-            <div className="flex space-x-8 mt-4 mx-4 mb-20 w-max">
+            <div className="flex gap-10 mt-4 mx-4 mb-20 w-max">
               {section.loading ? (
-                Array(6).fill(0).map((_, index) => (
-                  <MovieCardSkeleton key={`skeleton-${i}-${index}`} />
-                ))
+                Array(6)
+                  .fill(0)
+                  .map((_, index) => (
+                    <MovieCardSkeleton key={`skeleton-${i}-${index}`} />
+                  ))
               ) : section.data.length > 0 ? (
                 section.data.map((movie, index) => (
                   <MovieCard key={index} movie={movie} />

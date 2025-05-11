@@ -35,7 +35,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
   };
 
   return (
-    <div className="flex absolute top-40 px-20 items-end">
+    <div className="flex absolute px-20 top-40 items-end">
       <div className="flex flex-col gap-2 flex-none">
         <div className="relative w-[350px] h-[520px] rounded-3xl overflow-hidden">
           {loading && (
@@ -117,22 +117,27 @@ const Details: React.FC<MediaProps> = ({ media }) => {
               <></>
             )}
             {!media.first_air_date && !media.release_date ? (
-  <p className="px-2 bg-white/50 rounded-full">Coming Soon</p>
-) : (
-  (media.first_air_date || media.release_date) &&
-  (new Date(media.first_air_date || media.release_date) > new Date() ? (
-    <>
-      <p className="px-2 bg-white/50 rounded-full">
-        {formatReleaseDate(media.first_air_date || media.release_date)}
-      </p>
-      <p className="px-2 bg-white/50 rounded-full">Coming Soon</p>
-    </>
-  ) : (
-    <p className="px-2 bg-white/50 rounded-full">
-      {formatReleaseDate(media.first_air_date || media.release_date)}
-    </p>
-  ))
-)}
+              <p className="px-2 bg-white/50 rounded-full">Coming Soon</p>
+            ) : (
+              (media.first_air_date || media.release_date) &&
+              (new Date(media.first_air_date || media.release_date) >
+              new Date() ? (
+                <>
+                  <p className="px-2 bg-white/50 rounded-full">
+                    {formatReleaseDate(
+                      media.first_air_date || media.release_date
+                    )}
+                  </p>
+                  <p className="px-2 bg-white/50 rounded-full">Coming Soon</p>
+                </>
+              ) : (
+                <p className="px-2 bg-white/50 rounded-full">
+                  {formatReleaseDate(
+                    media.first_air_date || media.release_date
+                  )}
+                </p>
+              ))
+            )}
 
             {media.first_air_date && (
               <div className="flex gap-4">

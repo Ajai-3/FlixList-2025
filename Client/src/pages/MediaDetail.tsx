@@ -9,38 +9,42 @@ import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
 import { motion } from "framer-motion";
+import Cast from "../components/Media/Cast";
+import { getCast } from "../api/GetCast";
 
 const MediaDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const [media, setMedia] = useState<any>();
+  const [cast, setCast] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchMediaDetails = async () => {
+      if (!id || !type) return;
+
       setIsLoading(true);
       try {
-        let response;
-        if (type === "movie") {
-          response = await axiosInstance.get(`/movie/${id}`);
-        } else if (type === "series") {
-          response = await axiosInstance.get(`/tv/${id}`);
-        }
-        if (response) {
-          setMedia(response.data);
-          console.log(response.data);
-        }
+        const mediaType = type === "movie" ? "movie" : "tv";
+
+        const [response, cast] = await Promise.all([
+          axiosInstance.get(`/${mediaType}/${id}`),
+          getCast(mediaType, id),
+        ]);
+
+        setMedia(response.data);
+        setCast(cast);
+
+        console.log(response.data);
+        console.log(cast);
       } catch (error) {
         console.error("Error fetching media details:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    if (id && type) {
-      fetchMediaDetails();
-    }
+
+    fetchMediaDetails();
   }, [type, id]);
-
-
 
   return (
     <motion.div
@@ -55,9 +59,10 @@ const MediaDetail: React.FC = () => {
         <div>
           <Navbar />
           <Hero media={media} />
-          <Details media={media} />
-          <MediaMetaInfo media={media} />
-          {media.seasons ? <Series media={media} /> : ""}
+            <Details media={media} />
+            <MediaMetaInfo media={media} />
+            {media.seasons ? <Series media={media} /> : ""}
+            <Cast cast={cast} />
           <Footer />
         </div>
       )}
