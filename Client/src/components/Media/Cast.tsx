@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import CastDiv from "./CastDiv";
 import LeftArrowButton from "../Contents/LeftArrowButton";
 import RightArrowButton from "../Contents/RightArrowButton";
-import useHorizontalScrollButton from "../../hooks/useHorizontalScrollButton";
 
 interface CastMember {
   id: number;
@@ -16,12 +15,27 @@ interface CastProps {
 }
 
 const Cast: React.FC<CastProps> = ({ cast }) => {
-  const { scrollRef, scroll } = useHorizontalScrollButton();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const cardWidth = 224;
+      const gap = 40;
+      const cardsPerScroll = 3;
+      const scrollAmount =
+        direction === "left"
+          ? -(cardWidth + gap) * cardsPerScroll
+          : (cardWidth + gap) * cardsPerScroll;
+
+      scrollRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="mb-8 px-10 mt-6">
-
       <div className="flex gap-2 justify-end">
         <LeftArrowButton onClick={() => scroll("left")} />
         <RightArrowButton onClick={() => scroll("right")} />
