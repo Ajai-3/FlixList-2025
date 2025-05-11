@@ -66,12 +66,12 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
           backgroundAttachment: "fixed",
           opacity: 0.95,
         }}
-        />
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black to-transparent z-10"></div>
+      />
+      <div className="absolute top-0 left-0 right-0 h-60 bg-gradient-to-b from-black to-transparent z-10"></div>
 
       <div className="container mx-auto relative z-10">
         <motion.div
-          className="flex justify-between absolute left-0 right-0 z-50"
+          className="flex justify-between absolute top-16 left-0 right-0 z-50"
           variants={footerVariants}
           initial="hidden"
           whileInView="visible"
@@ -133,32 +133,70 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
           </motion.div>
         </motion.div>
 
-        {/* Text Masking Effect - Using same background as parent */}
+        {/* Text Masking Effect with letter-shaped borders */}
         <motion.div
-          className="relative top-28 flex items-center justify-center mb-10"
+          className="relative top-44 flex items-center justify-center mb-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
         >
           <motion.h1
-            className="text-5xl mt-8 mb-4 md:text-[380px] font-extrabold uppercase tracking-wide text-transparent bg-clip-text leading-tight"
-            style={{
-              backgroundImage: `url('${imageUrl}')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              WebkitBackgroundClip: "text",
-              backgroundAttachment: "fixed",
-              filter: "contrast(1.1) brightness(1.1)",
-            }}
+            className="text-5xl mt-8 md:text-[380px] font-extrabold uppercase tracking-wide leading-tight relative"
             initial={{ opacity: 0.4, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{
-              backgroundPosition: "50% center",
-              transition: { duration: 3 },
-            }}
           >
-            FlixList
+            {/* Text with image background */}
+            <span
+              className="absolute inset-0 text-transparent bg-clip-text"
+              style={{
+                backgroundImage: `url('${imageUrl}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                WebkitBackgroundClip: "text",
+                backgroundAttachment: "fixed",
+                filter: "contrast(1.1) brightness(1.1)",
+              }}
+            >
+              FlixList
+            </span>
+
+            {/* Text with stroke/border effect */}
+            <motion.div
+              className="relative inline-block overflow-hidden"
+              whileHover="hover"
+              initial="initial"
+            >
+              <motion.span
+                className="block text-transparent"
+                style={{
+                  WebkitTextStroke: "2px rgba(128, 128, 128, 0.15)",
+                }}
+              >
+                FlixList
+              </motion.span>
+
+              <motion.span
+                className="absolute top-0 left-0 text-transparent"
+                style={{
+                  WebkitTextStroke: "2px rgba(200, 200, 200, 0.3)",
+                }}
+                variants={{
+                  initial: {
+                    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
+                  },
+                  hover: {
+                    clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+                    transition: {
+                      duration: 0.8,
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                  },
+                }}
+              >
+                FlixList
+              </motion.span>
+            </motion.div>
           </motion.h1>
         </motion.div>
 
