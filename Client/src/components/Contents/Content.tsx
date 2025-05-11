@@ -128,17 +128,14 @@ const Content: React.FC = () => {
           <div className="overflow-x-auto scrollbar-hidden">
             <div className="flex space-x-8 mt-4 mx-4 mb-20 w-max">
               {section.loading ? (
-                // Show skeleton loaders while data is loading
                 Array(6).fill(0).map((_, index) => (
                   <MovieCardSkeleton key={`skeleton-${i}-${index}`} />
                 ))
               ) : section.data.length > 0 ? (
-                // Show actual movie cards when data is loaded
                 section.data.map((movie, index) => (
                   <MovieCard key={index} movie={movie} />
                 ))
               ) : (
-                // Fallback when no data is available
                 <div className="text-gray-400 italic">
                   No {section.heading.toLowerCase()} available
                 </div>

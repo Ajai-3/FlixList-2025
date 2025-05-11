@@ -1,15 +1,20 @@
-import React from 'react'
-import { Routes, Route } from "react-router-dom"
-import Home from './pages/Home'
-import MediaDetail from './pages/MediaDetail'
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import Home from "./pages/Home";
+import MediaDetail from "./pages/MediaDetail";
+import { AnimatePresence } from "framer-motion";
 
 const App: React.FC = () => {
-  return (
-    <Routes>
-      <Route path='/' element={<Home />} />
-      <Route path='/media/:type/:id' element={<MediaDetail />} />
-    </Routes>
-  )
-}
+  const location = useLocation();
 
-export default App
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Home />} />
+        <Route path="/media/:type/:id" element={<MediaDetail />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+export default App;

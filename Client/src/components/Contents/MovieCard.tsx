@@ -26,7 +26,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
   const handleImageLoad = () => {
     setImageLoaded(true);
-    setTimeout(() => setLoading(false), 300); 
+    setTimeout(() => setLoading(false), 100);
   };
 
   const rating = movie.vote_average;
@@ -42,15 +42,19 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     ratingColor = "text-red-500";
   }
 
-  const getType = (media: any): 'movie' | 'series' | 'anime' => {
+  const getType = (media: any): "movie" | "series" | "anime" => {
     if (media.title || media.release_date) {
-      return 'movie';
+      return "movie";
     }
-    return 'series'; 
+    return "series";
   };
 
   const handleDetails = () => {
     const type = getType(movie);
+    if (movie.poster_path) {
+      const img = new Image();
+      img.src = `https://image.tmdb.org/t/p/w1280${movie.poster_path}`;
+    }
     navigate(`/media/${type}/${movie.id}`);
   };
 
@@ -64,59 +68,58 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         scale: 1.05,
         transition: { type: "spring", stiffness: 200, damping: 8 },
       }}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.1, type: "spring", stiffness: 200 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, type: "tween" }}
     >
       <div className="overflow-hidden rounded-xl relative">
-        {/* Loading Skeleton */}
+        {/* Loading Skeleton - Using a more subtle loading animation */}
         {loading && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-700 z-10"
+            className="absolute inset-0 bg-gray-900/90 z-10"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ 
+            exit={{
               opacity: 0,
-              transition: { duration: 0.5, ease: "easeOut" }
+              transition: { duration: 0.3, ease: "easeOut" },
             }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div 
-                className="w-8 h-8 border-2 border-main-color-2 border-t-main-color-2 rounded-full"
-                animate={{ 
+              <motion.div
+                className="w-6 h-6 border-2 border-main-color-2 border-t-transparent rounded-full"
+                animate={{
                   rotate: 360,
-                  scale: [1, 1.2, 1]
                 }}
-                transition={{ 
-                  duration: 1.5,
+                transition={{
+                  duration: 0.8,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               />
             </div>
           </motion.div>
         )}
 
-
         <motion.div
           className="relative w-full h-80"
           initial={{ opacity: 0 }}
-          animate={{ 
+          animate={{
             opacity: imageLoaded ? 1 : 0,
-            transition: { duration: 0.8, ease: "easeInOut" }
+            transition: { duration: 0.4, ease: "easeInOut" },
           }}
         >
           <motion.img
             src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
             alt={movie.title || movie.name || "Movie poster"}
             className="w-full h-full object-cover rounded-xl"
-            initial={{ scale: 0.95 }}
+            initial={{ scale: 0.98 }}
             animate={{
               scale: isHovered ? 1.05 : 1,
-              transition: { 
-                duration: 0.5,
-                ease: "easeOut"
-              }
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
             }}
             onLoad={handleImageLoad}
           />
@@ -126,9 +129,9 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         <motion.div
           className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-gray-900 to-transparent rounded-b-xl"
           initial={{ opacity: 0 }}
-          animate={{ 
+          animate={{
             opacity: loading ? 0 : 1,
-            transition: { delay: 0.3 }
+            transition: { delay: 0.3 },
           }}
         />
 
@@ -139,29 +142,27 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           whileTap={{ scale: 0.9 }}
           onClick={(e) => {
             e.stopPropagation();
-
           }}
           initial={{ opacity: 0 }}
-          animate={{ 
+          animate={{
             opacity: loading ? 0 : 1,
-            transition: { delay: 0.4 }
+            transition: { delay: 0.4 },
           }}
         >
           <BookmarksIcon className="text-white" fontSize="small" />
         </motion.div>
 
-
         <motion.div
           className="absolute bottom-0 left-0 right-0 m-2 z-10"
           initial={{ y: 20, opacity: 0 }}
-          animate={{ 
+          animate={{
             y: loading ? 20 : 0,
             opacity: loading ? 0 : 1,
-            transition: { 
+            transition: {
               delay: 0.5,
               duration: 0.5,
-              ease: "easeOut"
-            }
+              ease: "easeOut",
+            },
           }}
         >
           <div className="text-xs flex gap-2 flex-wrap">
@@ -169,7 +170,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
               {languageMap[movie.original_language] || movie.original_language}
             </p>
             <p className="bg-black/50 px-2 rounded-full">
-              {movie.release_date?.split("-")[0] || movie.first_air_date?.split("-")[0]}
+              {movie.release_date?.split("-")[0] ||
+                movie.first_air_date?.split("-")[0]}
             </p>
             <div
               className={`flex items-center bg-black/50 px-2 rounded-full font-semibold ${ratingColor}`}
