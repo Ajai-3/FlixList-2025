@@ -8,7 +8,6 @@ import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
 
-
 const MediaDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const [media, setMedia] = useState<any>();
@@ -25,7 +24,7 @@ const MediaDetail: React.FC = () => {
         }
         if (response) {
           setMedia(response.data);
-          console.log(response.data)
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching media details:", error);
@@ -36,7 +35,7 @@ const MediaDetail: React.FC = () => {
     }
   }, [type, id]);
 
-  if (!media) return null; 
+  if (!media) return null;
 
   return (
     <div>
@@ -44,8 +43,9 @@ const MediaDetail: React.FC = () => {
 
       <Hero media={media} />
       <Details media={media} />
-      {/* <MediaMetaInfo media={media} /> */}
-      {media.seasons ? <Series media={media} /> : ''}
+
+      {media.seasons ? <Series media={media} /> : ""}
+      <MediaMetaInfo media={media} />
       <Footer />
     </div>
   );

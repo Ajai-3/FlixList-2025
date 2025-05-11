@@ -10,31 +10,36 @@ const NavInput: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    setError(null); 
   }, []);
 
   const handleResultClick = useCallback((mediaType: string, id: number) => {
-    // setSearchQuery("");
     setResults([]);
     setHasSearched(false);
     navigate(`/media/${mediaType === "tv" ? "series" : "movie"}/${id}`);
   }, [navigate]);
 
-
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.trim()) {
         setIsLoading(true);
+        setError(null);
         try {
           const data = await searchMedia(searchQuery);
-          setResults(data || []);
+          if (!data) {
+            throw new Error("No data returned from API");
+          }
+          setResults(data);
           setHasSearched(true);
         } catch (error) {
           console.error("Search error:", error);
+          setError("Failed to fetch results");
           setResults([]);
         } finally {
           setIsLoading(false);
@@ -43,11 +48,10 @@ const NavInput: React.FC = () => {
         setResults([]);
         setHasSearched(false);
       }
-    }, 200);
+    }, 300); // Slightly increased debounce time
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,14 +66,16 @@ const NavInput: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-  const filteredResults = useMemo(() => (
-    results.filter(media => media.poster_path)
+  const filteredResults = useMemo(() => {
+    return results
+      .filter(media => 
+        media.poster_path && 
+        (media.media_type === "movie" || media.media_type === "tv")
+      )
       .sort((a, b) => b.popularity - a.popularity)
-      .slice(0, 15) 
-  ), [results]);
+      .slice(0, 10);
+  }, [results]);
 
-  // Animation variants
   const inputVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {
@@ -113,15 +119,19 @@ const NavInput: React.FC = () => {
         )}
       </motion.div>
 
-      {searchQuery && (filteredResults.length > 0 || hasSearched) && (
+      {searchQuery && (filteredResults.length > 0 || hasSearched || error) && (
         <motion.div
-          className="absolute scrollbar-hidden bg-black/90 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50"
+          className="absolute scrollbar-hidden bg-black/95 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.2 }}
         >
-          {isLoading ? (
+          {error ? (
+            <div className="p-4 text-center text-red-400">
+              {error}
+            </div>
+          ) : isLoading ? (
             <div className="flex justify-center items-center h-20">
               <div className="w-6 h-6 border-2 border-main-color-2 border-t-transparent rounded-full animate-spin"></div>
             </div>
