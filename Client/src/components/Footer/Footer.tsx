@@ -8,7 +8,7 @@ interface MediaProps {
 }
 
 const Footer: React.FC<MediaProps> = ({ media }) => {
-  const defaultBgImage = "/wi7poYZy9b4CqmPMod0n1su8Quo.jpg";
+  const defaultBgImage = "/zMrk2G3XsnfYKiIp1NEfdtvDyBH.jpg";
   const imagePath = media?.backdrop_path || defaultBgImage;
   const imageUrl = `https://image.tmdb.org/t/p/original${imagePath}`;
 
@@ -55,7 +55,7 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
   };
 
   return (
-    <footer className="relative w-full text-white pt-16 pb-6 overflow-hidden bg-black mt-32">
+    <footer className="relative w-full text-white pt-16 px-16 pb-6 overflow-hidden bg-black mt-32">
       {/* Background Image Container */}
       <div
         className="absolute inset-0 z-0"
@@ -67,7 +67,7 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
           opacity: 0.95,
         }}
       />
-      <div className="absolute top-0 left-0 right-0 h-60 bg-gradient-to-b from-black to-transparent z-10"></div>
+      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-black to-transparent z-10"></div>
 
       <div className="container mx-auto relative z-10">
         <motion.div
@@ -135,14 +135,14 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
 
         {/* Text Masking Effect with letter-shaped borders */}
         <motion.div
-          className="relative top-44 flex items-center justify-center mb-10"
+          className="relative top-44 flex items-center justify-center mb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
         >
           <motion.h1
-            className="text-5xl mt-8 md:text-[380px] font-extrabold uppercase tracking-wide leading-tight relative"
+            className="text-5xl mt-10 md:text-[340px] font-extrabold uppercase tracking-wide leading-tight relative"
             initial={{ opacity: 0.4, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >

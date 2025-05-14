@@ -36,7 +36,7 @@ const CastDiv: React.FC<CastMember> = ({ member }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Image Container */}
-      <div className="relative h-60 w-40 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
+      <div className="relative h-56 w-36 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
         {/* Loading State */}
         {loading && (
           <motion.div
@@ -88,7 +88,7 @@ const CastDiv: React.FC<CastMember> = ({ member }) => {
 
       {/* Cast Info */}
       <motion.div
-        className="mt-2 w-40"
+        className="mt-2 w-36"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}

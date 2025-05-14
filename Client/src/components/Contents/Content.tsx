@@ -126,21 +126,21 @@ const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivE
 
   // Skeleton loader component
   const MovieCardSkeleton = () => (
-    <div className="relative shrink-0 rounded-xl w-56 h-80 bg-gray-800 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 animate-pulse" />
+    <div className="relative shrink-0 rounded-xl w-48 h-72 bg-gray-950 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />
       <div className="absolute bottom-0 left-0 right-0 m-2">
         <div className="flex gap-2">
-          <div className="h-4 bg-gray-700 rounded-full w-1/4 animate-pulse" />
-          <div className="h-4 bg-gray-700 rounded-full w-1/4 animate-pulse" />
-          <div className="h-4 bg-gray-700 rounded-full w-1/4 animate-pulse" />
+          <div className="h-4 bg-gray-800 rounded-full w-1/4 animate-pulse" />
+          <div className="h-4 bg-gray-800 rounded-full w-1/4 animate-pulse" />
+          <div className="h-4 bg-gray-800 rounded-full w-1/4 animate-pulse" />
         </div>
-        <div className="h-4 bg-gray-700 rounded-full w-3/4 mt-2 animate-pulse" />
+        <div className="h-4 bg-gray-800 rounded-full w-3/4 mt-2 animate-pulse" />
       </div>
     </div>
   );
 
   return (
-    <div className="relative -mt-40 px-10">
+    <div className="relative -mt-56 px-10">
       {mediaSections.map((section, i) => (
         <motion.div
           key={i}
@@ -157,7 +157,7 @@ const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivE
           }}
         >
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl mx-4 font-semibold">{section.heading}</h1>
+            <h1 className="text-2xl mx-4 font-semibold">{section.heading}</h1>
             <div className="flex gap-2">
               <LeftArrowButton
                 onClick={() => handleScroll("left", section.ref)}
@@ -171,9 +171,10 @@ const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivE
           <div className="relative">
             <div
               ref={section.ref}
-              className="flex gap-10 mt-4 mx-4 p-4 mb-20 overflow-x-auto scrollbar-hidden"
+              className="flex gap-6 mt-2 mx-4 p-4 mb-16 overflow-x-auto scrollbar-hidden"
               style={{ scrollBehavior: "smooth" }}
             >
+
               {section.loading ? (
                 Array(6)
                   .fill(0)

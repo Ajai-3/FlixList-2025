@@ -30,7 +30,7 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
 
   return (
     <motion.div
-      className="relative w-40"
+      className="relative w-36"
       whileHover={{
         scale: 1.05,
         transition: { type: "spring", stiffness: 300, damping: 10 }
@@ -40,7 +40,7 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Image Container */}
-      <div className="relative h-60 w-40 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
+      <div className="relative h-56 w-36 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
         {/* Loading State */}
         {loading && (
           <motion.div
@@ -97,7 +97,7 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="flex justify-between items-center w-40">
+        <div className="flex justify-between items-center w-36">
           <p className="font-medium truncate text-white text-sm">{seasonDisplayName}</p>
           <p className="text-gray-400 text-xs whitespace-nowrap">
             {season.episode_count} {season.episode_count === 1 ? 'Episode' : 'Episodes'}

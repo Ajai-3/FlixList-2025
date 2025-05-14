@@ -61,7 +61,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   return (
     <motion.div
       onClick={handleDetails}
-      className="relative shrink-0 rounded-xl cursor-pointer w-56"
+      className="relative shrink-0 rounded-xl cursor-pointer w-48"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{
@@ -77,7 +77,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         {/* Loading Skeleton - Using a more subtle loading animation */}
         {loading && (
           <motion.div
-            className="absolute inset-0 bg-gray-900/90 z-10"
+            className="absolute inset-0 bg-gray-900 z-10"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{
@@ -102,7 +102,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         )}
 
         <motion.div
-          className="relative w-full h-80"
+          className="relative w-full h-72"
           initial={{ opacity: 0 }}
           animate={{
             opacity: imageLoaded ? 1 : 0,

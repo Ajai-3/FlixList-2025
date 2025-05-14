@@ -19,7 +19,7 @@ const LeftArrowButton: React.FC<ButtonProps> = ({ onClick }) => {
         onClick={handleClick}
         aria-label="Scroll left"
       >
-        <KeyboardArrowLeftIcon sx={{ fontSize: 34 }} />
+        <KeyboardArrowLeftIcon sx={{ fontSize: 32 }} />
       </button>
     </>
   );

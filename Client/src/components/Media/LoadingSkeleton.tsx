@@ -6,10 +6,10 @@ const LoadingSkeleton: React.FC = () => {
     <div className="min-h-screen bg-gray-900 relative">
       <Navbar />
 
-      <div className="flex absolute top-40 px-20 items-end w-full">
+      <div className="flex absolute top-36 px-20 items-end w-full">
         {/* Poster Skeleton */}
         <div className="flex flex-col gap-3 flex-none">
-          <div className="w-[350px] h-[520px] rounded-3xl bg-gray-800 animate-pulse"></div>
+          <div className="w-[310px] h-[470px] rounded-3xl bg-gray-800 animate-pulse"></div>
           <div className="h-10 w-full bg-gray-800 rounded-md animate-pulse"></div>
           <div className="h-10 w-full bg-gray-800 rounded-md animate-pulse"></div>
         </div>

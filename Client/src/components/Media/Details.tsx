@@ -35,9 +35,9 @@ const Details: React.FC<MediaProps> = ({ media }) => {
   };
 
   return (
-    <div className="flex absolute px-20 top-40 items-end">
+    <div className="flex absolute px-20 top-36 items-end">
       <div className="flex flex-col gap-2 flex-none">
-        <div className="relative w-[350px] h-[520px] rounded-3xl overflow-hidden">
+        <div className="relative w-[310px] h-[470px] rounded-3xl overflow-hidden">
           {loading && (
             <div className="absolute inset-0 bg-gradient-to-br from-gray-700/10 to-gray-800/20 flex items-center justify-center">
               <div className="w-12 h-12 border-4 border-main-color-2 rounded-full animate-ping"></div>
@@ -86,7 +86,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
           <div>
             <div className="flex gap-2 items-center text-xl">
               <div className="flex gap-2">
-                <IoIosHeart className="text-3xl text-red-600" />
+                <IoIosHeart className="text-2xl text-red-600" />
                 <p className="">70%</p>
                 <p className="text-gray-400 text-sm text-start">1.5k</p>
               </div>
@@ -102,7 +102,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-4 text-sm">
+          <div className="flex gap-4 text-xs">
             <div className="bg-green-700 px-2 rounded-full flex gap-2">
               <p>WATCH COUNT</p> <p className="text-black">|</p> {count}
             </div>

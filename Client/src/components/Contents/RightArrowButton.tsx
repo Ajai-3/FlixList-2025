@@ -19,7 +19,7 @@ const RightArrowButton: React.FC<ButtonProps> = ({ onClick }) => {
         onClick={handleClick}
         aria-label="Scroll right"
       >
-        <KeyboardArrowRightIcon sx={{ fontSize: 34 }} />
+        <KeyboardArrowRightIcon sx={{ fontSize: 32 }} />
       </button>
     </>
   );
