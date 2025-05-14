@@ -16,7 +16,7 @@ const Home: React.FC = () => {
       <Navbar />
       <Hero media={{ backdrop_path: null }} />
       <Content />
-      <Footer />
+      <Footer media={{ backdrop_path: null }} />
     </motion.div>
   );
 };

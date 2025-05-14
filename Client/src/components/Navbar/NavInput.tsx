@@ -48,7 +48,7 @@ const NavInput: React.FC = () => {
         setResults([]);
         setHasSearched(false);
       }
-    }, 300); // Slightly increased debounce time
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);

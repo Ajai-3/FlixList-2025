@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import LoadingSkeleton from "../components/Media/LoadingSkeleton";
 import axiosInstance from "../api/AxiosInstance";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
@@ -8,61 +9,42 @@ import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
 import { motion } from "framer-motion";
+import Cast from "../components/Media/Cast";
+import { getCast } from "../api/GetCast";
 
 const MediaDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const [media, setMedia] = useState<any>();
+  const [cast, setCast] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchMediaDetails = async () => {
+      if (!id || !type) return;
+
       setIsLoading(true);
       try {
-        let response;
-        if (type === "movie") {
-          response = await axiosInstance.get(`/movie/${id}`);
-        } else if (type === "series") {
-          response = await axiosInstance.get(`/tv/${id}`);
-        }
-        if (response) {
-          setMedia(response.data);
-        }
+        const mediaType = type === "movie" ? "movie" : "tv";
+
+        const [response, cast] = await Promise.all([
+          axiosInstance.get(`/${mediaType}/${id}`),
+          getCast(mediaType, id),
+        ]);
+
+        setMedia(response.data);
+        setCast(cast);
+
+        console.log(response.data);
+        console.log(cast);
       } catch (error) {
         console.error("Error fetching media details:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    if (id && type) {
-      fetchMediaDetails();
-    }
+
+    fetchMediaDetails();
   }, [type, id]);
-
-
-  const LoadingSkeleton = () => (
-    <div className="min-h-screen bg-gray-900">
-      <Navbar />
-      <div className="w-full h-[500px] relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 animate-pulse"></div>
-      </div>
-      <div className="flex px-32 -mt-40 relative">
-        <div className="w-[320px] h-[480px] rounded-3xl bg-gray-800 animate-pulse"></div>
-        <div className="px-20 w-full">
-          <div className="h-10 w-40 bg-gray-800 rounded-md mt-10 mb-10 animate-pulse"></div>
-          <div className="h-14 w-3/4 bg-gray-800 rounded-md mb-6 animate-pulse"></div>
-          <div className="flex gap-4">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-6 w-20 bg-gray-800 rounded-full animate-pulse"
-              ></div>
-            ))}
-          </div>
-          <div className="h-32 w-full bg-gray-800 rounded-md mt-10 animate-pulse"></div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <motion.div
@@ -77,10 +59,11 @@ const MediaDetail: React.FC = () => {
         <div>
           <Navbar />
           <Hero media={media} />
-          <Details media={media} />
-          {media.seasons ? <Series media={media} /> : ""}
-          <MediaMetaInfo media={media} />
-          <Footer />
+            <Details media={media} />
+            <MediaMetaInfo media={media} />
+            {media.seasons ? <Series media={media} /> : ""}
+            <Cast cast={cast} />
+          <Footer media={media} />
         </div>
       )}
     </motion.div>

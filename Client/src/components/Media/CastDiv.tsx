@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
-interface SeriesDivProps {
-  season: {
-    poster_path: string | null;
+interface CastMember {
+  member: {
+    id: number;
     name: string;
-    season_number: number;
-    episode_count: number;
+    character: string;
+    profile_path: string | null;
   };
 }
 
-const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
+const CastDiv: React.FC<CastMember> = ({ member }) => {
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
@@ -24,16 +24,12 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
     setImageError(true);
   };
 
-  const seasonDisplayName = season.name === "Specials" 
-    ? "Specials" 
-    : `Season ${season.season_number}`;
-
   return (
     <motion.div
-      className="relative w-36"
+      className="cursor-pointer flex-shrink-0"
       whileHover={{
         scale: 1.05,
-        transition: { type: "spring", stiffness: 300, damping: 10 }
+        transition: { type: "spring", stiffness: 300, damping: 10 },
       }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -47,9 +43,9 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
             className="absolute inset-0 flex items-center justify-center bg-gray-800/80 z-10"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ 
+            exit={{
               opacity: 0,
-              transition: { duration: 0.3, ease: "easeInOut" }
+              transition: { duration: 0.3, ease: "easeInOut" },
             }}
           >
             <motion.div
@@ -61,21 +57,21 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
         )}
 
         {/* Actual Image */}
-        {!imageError && season.poster_path ? (
+        {!imageError && member.profile_path ? (
           <motion.img
-            src={`https://image.tmdb.org/t/p/w300${season.poster_path}`}
+            src={`https://image.tmdb.org/t/p/w185${member.profile_path}`}
             className="absolute inset-0 w-full h-full object-cover"
-            alt={seasonDisplayName}
+            alt={member.name}
             onLoad={handleImageLoad}
             onError={handleImageError}
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ 
+            animate={{
               opacity: loading ? 0 : 1,
-              scale: loading ? 0.95 : 1
+              scale: loading ? 0.95 : 1,
             }}
-            transition={{ 
+            transition={{
               opacity: { duration: 0.5, ease: "easeInOut" },
-              scale: { duration: 0.7, ease: "easeOut" }
+              scale: { duration: 0.7, ease: "easeOut" },
             }}
           />
         ) : (
@@ -90,22 +86,20 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
         )}
       </div>
 
-      {/* Season Info */}
-      <motion.div 
-        className="mt-2"
+      {/* Cast Info */}
+      <motion.div
+        className="mt-2 w-36"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="flex justify-between items-center w-36">
-          <p className="font-medium truncate text-white text-sm">{seasonDisplayName}</p>
-          <p className="text-gray-400 text-xs whitespace-nowrap">
-            {season.episode_count} {season.episode_count === 1 ? 'Episode' : 'Episodes'}
-          </p>
-        </div>
+        <h1 className="text-md font-medium truncate text-white">
+          {member.name}
+        </h1>
+        <h2 className="text-sm text-gray-400 truncate">{member.character}</h2>
       </motion.div>
     </motion.div>
   );
 };
 
-export default SeriesDiv;
+export default CastDiv;

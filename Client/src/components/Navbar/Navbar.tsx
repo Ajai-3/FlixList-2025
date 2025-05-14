@@ -7,13 +7,14 @@ import NavInput from "./NavInput";
 const Navbar: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 right-0 flex justify-between items-center px-2 sm:px-10 md:px-20 py-2 z-50">
-      <div className="flex gap-4">
+      <div className="flex gap-20 items-center">
         <Logo />
-        <NavInput />
+         <NavMenu />
       </div>
 
-      <NavMenu />
-      <div>
+     
+      <div className="flex gap-4 items-center">
+        <NavInput />
         <NavButton name={"SIGN IN"} bgColor={false} />
         <NavButton name={"SIGN UP"} bgColor={true} />
       </div>
