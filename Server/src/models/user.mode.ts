@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema({
     default: "user",
     required: true,
   },
+  socketId: {
+    type: String,
+    default: "",
+  },
   isBanned: {
     type: Boolean,
     default: false,
