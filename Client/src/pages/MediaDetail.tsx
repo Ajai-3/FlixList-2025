@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LoadingSkeleton from "../components/Media/LoadingSkeleton";
 import axiosInstance from "../api/AxiosInstance";
