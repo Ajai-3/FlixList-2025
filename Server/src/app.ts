@@ -1,6 +1,21 @@
 import express from "express";
+import userRoutes from "./presentation/routes/user/user.routes";
+import authRoutes from "./presentation/routes/auth/auth.routes";
+import mediaRoutes from "./presentation/routes/user/media.routes";
+import adminRoutes from "./presentation/routes/admin/admin.routes";
+
+
 const app = express();
 
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/media", mediaRoutes);
+
+app.use("/api/v1/admin", adminRoutes);
 
 export default app;
