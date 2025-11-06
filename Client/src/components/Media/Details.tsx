@@ -24,7 +24,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
   const [showPlayerModal, setShowPlayerModal] = useState(false);
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const [playerUrl, setPlayerUrl] = useState<string | null>(null);
-  const [selectedPlayer, setSelectedPlayer] = useState<number>(1); // 1: Player 1, 2: Player 2
+  const [selectedProvider, setSelectedProvider] = useState<string>("vidking");
 
   const [seasons, setSeasons] = useState<any[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
@@ -32,10 +32,57 @@ const Details: React.FC<MediaProps> = ({ media }) => {
   const [episodesLoading, setEpisodesLoading] = useState(false);
 
   const [hoveringPoster, setHoveringPoster] = useState(false);
-  const [selectedEpisode, setSelectedEpisode] = useState<{
-    season: number;
-    episode: number;
-  } | null>(null);
+  const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
+  const [showEpisodeSelection, setShowEpisodeSelection] = useState(false);
+
+  // Define ONLY working streaming providers
+  const streamingProviders = {
+    vidking: {
+      name: "VidKing",
+      movie: (id: string) => `https://www.vidking.net/embed/movie/${id}`,
+      tv: (id: string, s: number, e: number) =>
+        `https://www.vidking.net/embed/tv/${id}/${s}/${e}`,
+      color: "bg-blue-500",
+      quality: "HD",
+      icon: "👑",
+      working: true,
+    },
+    vidsrc: {
+      name: "VidSrc",
+      movie: (id: string) => `https://vidsrc.win/movie.html?id=${id}`,
+      tv: (id: string, s: number, e: number) =>
+        `https://vidsrc.win/tv.html?id=${id}&s=${s}&e=${e}`,
+      color: "bg-green-500",
+      quality: "HD",
+      icon: "🎬",
+      working: true,
+    },
+    vidsrcme: {
+      name: "VidSrc.me",
+      movie: (id: string) => `https://vidsrc.me/movie/latest/${id}`,
+      tv: (id: string, s: number, e: number) =>
+        `https://vidsrc.me/tv/latest/${id}/${s}/${e}`,
+      color: "bg-purple-500",
+      quality: "HD",
+      icon: "📺",
+      working: true,
+    },
+  };
+
+  // ✅ Generate player URL based on selected provider
+  const generatePlayerUrl = (
+    seasonNumber?: number,
+    episodeNumber?: number
+  ): string => {
+    const provider =
+      streamingProviders[selectedProvider as keyof typeof streamingProviders];
+
+    if (!media.first_air_date) {
+      return provider.movie(media.id);
+    } else {
+      return provider.tv(media.id, seasonNumber!, episodeNumber!);
+    }
+  };
 
   // ✅ Fetch trailer from TMDB using axiosInstance
   useEffect(() => {
@@ -92,6 +139,11 @@ const Details: React.FC<MediaProps> = ({ media }) => {
           (s: any) => s.season_number >= 0 && (s.episode_count ?? 0) > 0
         );
         setSeasons(validSeasons);
+
+        // Auto-select first season
+        if (validSeasons.length > 0 && selectedSeason === null) {
+          setSelectedSeason(validSeasons[0].season_number);
+        }
       } else {
         // Fallback: fetch seasons if not in media prop
         const fetchSeasons = async () => {
@@ -103,6 +155,11 @@ const Details: React.FC<MediaProps> = ({ media }) => {
               (s: any) => s.season_number >= 0 && (s.episode_count ?? 0) > 0
             );
             setSeasons(validSeasons);
+
+            // Auto-select first season
+            if (validSeasons.length > 0 && selectedSeason === null) {
+              setSelectedSeason(validSeasons[0].season_number);
+            }
           } catch (err) {
             console.error("Seasons fetch failed:", err);
             setSeasons([]);
@@ -146,46 +203,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
 
   const handleImageLoad = () => setLoading(false);
 
-  // ✅ Generate player URLs based on selected player
-  const generatePlayerUrl = (
-    seasonNumber?: number,
-    episodeNumber?: number
-  ): string => {
-    if (selectedPlayer === 1) {
-      // Player 1 (VidKing)
-      if (!media.first_air_date) {
-        return `https://www.vidking.net/embed/movie/${media.id}`;
-      }
-      return `https://www.vidking.net/embed/tv/${media.id}/${seasonNumber}/${episodeNumber}`;
-    } else {
-      // Player 2 (Vidsrc)
-      if (!media.first_air_date) {
-        return `https://vidsrc.win/movie.html?id=${media.id}`;
-      }
-      return `https://vidsrc.win/tv.html?id=${media.id}&s=${seasonNumber}&e=${episodeNumber}`;
-    }
-  };
-
-  // ✅ Open player modal (movie or episode)
-  const openPlayerModal = () => {
-    if (!media.first_air_date) {
-      // For movies: show player selection modal directly
-      setShowPlayerModal(true);
-    } else {
-      // For TV shows: show season/episode selector directly (NO player selection)
-      setShowPlayerModal(true);
-
-      // Auto-select first season if available and no season selected (for TV shows)
-      if (seasons.length > 0 && selectedSeason === null) {
-        const firstSeason = seasons.find((s) => s.season_number >= 0);
-        if (firstSeason) {
-          setSelectedSeason(firstSeason.season_number);
-        }
-      }
-    }
-  };
-
-  // ✅ Start playing with selected player
+  // ✅ Start playing with selected provider
   const startPlaying = (seasonNumber?: number, episodeNumber?: number) => {
     const url = generatePlayerUrl(seasonNumber, episodeNumber);
     setPlayerUrl(url);
@@ -193,25 +211,30 @@ const Details: React.FC<MediaProps> = ({ media }) => {
     setShowVideoPlayer(true);
   };
 
-  // ✅ Play episode (for TV shows - show player selection when episode is clicked)
-  const playEpisode = (seasonNumber: number, episodeNumber: number) => {
-    // Store the selected episode
-    setSelectedEpisode({ season: seasonNumber, episode: episodeNumber });
-    // Show player selection modal
+  // ✅ Open provider selection
+  const openProviderSelection = (episode?: any) => {
+    setSelectedEpisode(episode);
+    setShowEpisodeSelection(false);
     setShowPlayerModal(true);
   };
 
-  // ✅ Confirm player selection and play episode
-  const confirmPlayerAndPlay = () => {
+  // ✅ Open episode selection or provider selection based on media type
+  const handlePlayClick = () => {
+    if (media.first_air_date) {
+      // For TV shows: show episode selection first
+      setShowEpisodeSelection(true);
+    } else {
+      // For movies: directly show provider selection
+      setShowPlayerModal(true);
+    }
+  };
+
+  // ✅ Confirm and play after provider selection
+  const confirmAndPlay = () => {
     if (selectedEpisode) {
-      const url = generatePlayerUrl(
-        selectedEpisode.season,
-        selectedEpisode.episode
-      );
-      setPlayerUrl(url);
-      setShowPlayerModal(false);
-      setShowVideoPlayer(true);
-      setSelectedEpisode(null);
+      startPlaying(selectedSeason!, selectedEpisode.episode_number);
+    } else if (!media.first_air_date) {
+      startPlaying();
     }
   };
 
@@ -263,7 +286,7 @@ const Details: React.FC<MediaProps> = ({ media }) => {
               }`}
             >
               <button
-                onClick={openPlayerModal}
+                onClick={handlePlayClick}
                 className="bg-main-color-2/90 hover:bg-main-color-2 px-5 py-3 rounded-full flex items-center gap-3 text-white text-lg z-20 shadow-lg"
               >
                 ▶ Play
@@ -397,166 +420,60 @@ const Details: React.FC<MediaProps> = ({ media }) => {
         </div>
       )}
 
-      {/* ✅ MODAL 1: Player Selection (for Movies and when episode is selected) */}
-      {showPlayerModal && (selectedEpisode || !media.first_air_date) && (
+      {/* ✅ MODAL: Episode Selection (FIRST FOR TV SHOWS) */}
+      {showEpisodeSelection && media.first_air_date && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-          <div className="relative w-full max-w-4xl bg-gray-900 rounded-xl overflow-hidden">
-            <div className="p-8">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-bold text-white">
-                  {selectedEpisode
-                    ? `Play Episode ${selectedEpisode.episode}`
-                    : "Select Player"}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowPlayerModal(false);
-                    setSelectedEpisode(null);
-                  }}
-                  className="bg-white text-black w-10 h-10 rounded-full flex items-center justify-center font-bold hover:bg-gray-200 transition"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Player Selection */}
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4 text-white">
-                  Choose Player
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button
-                    onClick={() => {
-                      setSelectedPlayer(1);
-                      if (!media.first_air_date || selectedEpisode) {
-                        confirmPlayerAndPlay();
-                      }
-                    }}
-                    className={`p-6 rounded-xl border-2 transition-all ${
-                      selectedPlayer === 1
-                        ? "border-main-color-2 bg-main-color-2/20"
-                        : "border-gray-600 bg-gray-800 hover:border-gray-400"
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div
-                        className={`text-2xl font-bold mb-2 ${
-                          selectedPlayer === 1
-                            ? "text-main-color-2"
-                            : "text-white"
-                        }`}
-                      >
-                        Player 1
-                      </div>
-                      <div
-                        className={`px-4 py-2 rounded-lg font-medium ${
-                          selectedPlayer === 1
-                            ? "bg-main-color-2 text-black"
-                            : "bg-gray-700 text-white"
-                        }`}
-                      >
-                        {selectedPlayer === 1 ? "Selected" : "Select"}
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setSelectedPlayer(2);
-                      if (!media.first_air_date || selectedEpisode) {
-                        confirmPlayerAndPlay();
-                      }
-                    }}
-                    className={`p-6 rounded-xl border-2 transition-all ${
-                      selectedPlayer === 2
-                        ? "border-main-color-2 bg-main-color-2/20"
-                        : "border-gray-600 bg-gray-800 hover:border-gray-400"
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div
-                        className={`text-2xl font-bold mb-2 ${
-                          selectedPlayer === 2
-                            ? "text-main-color-2"
-                            : "text-white"
-                        }`}
-                      >
-                        Player 2
-                      </div>
-                      <div
-                        className={`px-4 py-2 rounded-lg font-medium ${
-                          selectedPlayer === 2
-                            ? "bg-main-color-2 text-black"
-                            : "bg-gray-700 text-white"
-                        }`}
-                      >
-                        {selectedPlayer === 2 ? "Selected" : "Select"}
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* For Movies - Direct Play Button */}
-              {!media.first_air_date && !selectedEpisode && (
-                <div className="text-center">
-                  <button
-                    onClick={() => startPlaying()}
-                    className="bg-main-color-2 text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-main-color-2/90 transition"
-                  >
-                    ▶ Start Watching on Player {selectedPlayer}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ✅ ENHANCED MODAL: Season & Episode Selection (Premium Design) */}
-      {showPlayerModal && media.first_air_date && !selectedEpisode && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-50 p-2">
-          <div className="relative w-full max-w-6xl h-[90vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-gray-700/50">
-            {/* Enhanced Header */}
-            <div className="flex-shrink-0 px-4 py-3">
+          <div className="relative w-full max-w-7xl h-[90vh] bg-gray-900 rounded-lg overflow-hidden flex flex-col border border-gray-600 shadow-xl">
+            {/* Header */}
+            <div className="flex-shrink-0 px-6 py-4 bg-gray-800 border-b border-gray-600">
               <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    Select Episode
-                  </h2>
-                  <p className="text-gray-400">
-                    Choose your season and episode
-                  </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-600">
+                    <img
+                      src={getImageUrl(media.poster_path, "w300")}
+                      alt={media.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">
+                      {media.name}
+                    </h2>
+                    <p className="text-gray-400 text-sm mt-1">
+                      Select season and episode to watch
+                    </p>
+                  </div>
                 </div>
                 <button
-                  onClick={() => setShowPlayerModal(false)}
-                  className="bg-black/80 backdrop-blur-2xl text-white w-12 h-12 rounded-full flex items-center justify-center font-bold transition-all duration-300 hover:scale-110 hover:rotate-90 shadow-lg"
+                  onClick={() => setShowEpisodeSelection(false)}
+                  className="text-gray-400 hover:text-white transition-colors duration-150 p-2 rounded-lg hover:bg-gray-700"
                 >
-                  ✕
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-              <div className="p-4">
-                {/* Enhanced Seasons Section */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-3xl font-bold text-white flex items-center gap-3">
-                      <span className="w-3 h-8 bg-main-color-2 rounded-full"></span>
-                      Seasons
-                    </h3>
-                    {selectedSeason !== null && (
-                      <span className="text-main-color-2 font-semibold text-lg">
-                        {seasons.find((s) => s.season_number === selectedSeason)
-                          ?.name || `Season ${selectedSeason}`}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex gap-8 overflow-x-auto pb-4 pt-4 px-2">
+            {/* Main Content */}
+            <div className="flex-1 flex min-h-0">
+              {/* Seasons Sidebar */}
+              <div className="w-80 bg-gray-800 border-r border-gray-600 overflow-y-auto">
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-white mb-6">
+                    Seasons
+                  </h3>
+                  <div className="space-y-4">
                     {seasons.length > 0 ? (
                       seasons.map((season) => (
                         <button
@@ -564,236 +481,324 @@ const Details: React.FC<MediaProps> = ({ media }) => {
                           onClick={() =>
                             setSelectedSeason(season.season_number)
                           }
-                          className={`flex-shrink-0 w-52 transition-all duration-500 transform ${
+                          className={`w-full text-left rounded-xl transition-all duration-200 overflow-hidden border-2 ${
                             selectedSeason === season.season_number
-                              ? "scale-105 ring-4 rounded-xl ring-main-color-2 shadow-2xl"
-                              : "hover:scale-105 hover:shadow-xl"
+                              ? "border-blue-500 bg-blue-500/10 shadow-lg"
+                              : "border-gray-600 bg-gray-700/50 hover:border-gray-500 hover:bg-gray-600/50"
                           }`}
                         >
-                          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50">
-                            <div className="relative overflow-hidden">
+                          <div className="flex">
+                            {/* Season Image */}
+                            <div className="w-28 h-36 flex-shrink-0">
                               <img
-                                src={getImageUrl(season.poster_path, "w342")}
+                                src={
+                                  getImageUrl(season.poster_path, "w300") ||
+                                  getImageUrl(media.poster_path, "w300")
+                                }
                                 alt={season.name}
-                                className="w-full h-80 object-cover transition-transform duration-700 hover:scale-110"
+                                className="w-full h-full object-cover"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.src = getImageUrl(
                                     media.poster_path,
-                                    "w342"
+                                    "w300"
                                   );
                                 }}
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            </div>
 
-                              {selectedSeason === season.season_number && (
-                                <div className="absolute inset-0 bg-main-color-2/10 flex items-center justify-center">
-                                  <div className="w-16 h-16 bg-gradient-to-r from-main-color-2 to-yellow-400 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
-                                    <div className="w-0 h-0 border-l-[16px] border-l-black border-y-[8px] border-y-transparent ml-1"></div>
-                                  </div>
+                            {/* Season Info */}
+                            <div className="flex-1 p-4">
+                              <div
+                                className={`font-bold text-lg mb-2 ${
+                                  selectedSeason === season.season_number
+                                    ? "text-blue-400"
+                                    : "text-white"
+                                }`}
+                              >
+                                {season.name}
+                              </div>
+                              <div className="text-gray-300 text-sm mb-1">
+                                {season.episode_count} episodes
+                              </div>
+                              {season.air_date && (
+                                <div className="text-gray-400 text-xs">
+                                  {new Date(season.air_date).getFullYear()}
                                 </div>
                               )}
-
-                              <div className="absolute bottom-4 left-4 right-4">
-                                <div className="font-bold text-xl text-white mb-1 drop-shadow-lg">
-                                  {season.name}
-                                </div>
-                                <div className="text-gray-200 text-sm font-medium drop-shadow-lg">
-                                  {season.episode_count} episodes
-                                </div>
-                              </div>
-
-                              {/* Season Number Badge */}
-                              <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1.5 rounded-full text-sm font-bold border border-white/20">
-                                S{season.season_number}
-                              </div>
                             </div>
                           </div>
                         </button>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center w-full py-16 text-gray-400">
-                        <div className="w-24 h-24 border-4 border-gray-600 border-t-main-color-2 rounded-full animate-spin mb-6"></div>
-                        <div className="text-xl font-semibold">
-                          Loading seasons...
-                        </div>
-                        <div className="text-sm mt-2">Please wait a moment</div>
+                      <div className="text-center py-8 text-gray-400">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                        Loading seasons...
                       </div>
                     )}
                   </div>
                 </div>
+              </div>
 
-                {/* Enhanced Episodes Section */}
+              {/* Episodes Main Content - With Images */}
+              <div className="flex-1 flex flex-col min-h-0 bg-gray-900">
+                {/* Season Header */}
                 {selectedSeason !== null && (
-                  <div className="mb-4">
-                    <div className="flex justify-between items-center mb-10">
+                  <div className="flex-shrink-0 px-6 py-4 bg-gray-800/30 border-b border-gray-600">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
-                          <span className="w-3 h-8 bg-main-color-2 rounded-full"></span>
-                          Episodes - Season {selectedSeason}
+                        <h3 className="text-xl font-bold text-white">
+                          {seasons.find(
+                            (s) => s.season_number === selectedSeason
+                          )?.name || `Season ${selectedSeason}`}
                         </h3>
-                        <p className="text-gray-400">
-                          Select an episode to start watching
+                        <p className="text-gray-400 text-sm mt-1">
+                          {seasons.find(
+                            (s) => s.season_number === selectedSeason
+                          )?.episode_count || 0}{" "}
+                          episodes
                         </p>
                       </div>
                       {episodes.length > 0 && (
-                        <div className="px-4 py-2 rounded-full border border-gray-700">
-                          <span className="text-main-color-2 font-bold text-lg">
-                            {episodes.length}{" "}
-                            {episodes.length === 1 ? "episode" : "episodes"}
-                          </span>
+                        <div className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium">
+                          {episodes.length} episodes
                         </div>
                       )}
                     </div>
-
-                    {episodesLoading ? (
-                      <div className="flex flex-col items-center justify-center py-20 bg-gray-800/30 rounded-3xl border border-gray-700/50">
-                        <div className="w-20 h-20 border-4 border-gray-600 border-t-main-color-2 rounded-full animate-spin mb-6"></div>
-                        <div className="text-2xl font-semibold text-gray-300 mb-2">
-                          Loading Episodes
-                        </div>
-                        <div className="text-gray-400">
-                          Getting season {selectedSeason} ready...
-                        </div>
-                      </div>
-                    ) : episodes.length === 0 ? (
-                      <div className="text-center py-20 bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl border border-gray-700/50">
-                        <div className="text-6xl mb-6">🎬</div>
-                        <div className="text-2xl font-bold text-white mb-3">
-                          No Episodes Available
-                        </div>
-                        <div className="text-gray-400 max-w-md mx-auto">
-                          This season doesn't have any episodes available yet.
-                          Please check back later.
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                        {episodes.map((episode) => (
-                          <div
-                            key={episode.id}
-                            className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 hover:border-main-color-2/70 shadow-lg hover:shadow-2xl"
-                          >
-                            <div className="relative overflow-hidden">
-                              <img
-                                src={getImageUrl(episode.still_path, "w500")}
-                                alt={episode.name}
-                                className="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-700"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = getImageUrl(
-                                    media.poster_path,
-                                    "w500"
-                                  );
-                                }}
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-
-                              {/* Episode Number */}
-                              <div className="absolute top-4 left-4 bg-black/90 text-white px-4 py-2 rounded-xl text-sm font-bold border border-white/20 shadow-lg">
-                                E
-                                {episode.episode_number
-                                  .toString()
-                                  .padStart(2, "0")}
-                              </div>
-
-                              {/* Runtime */}
-                              {episode.runtime && (
-                                <div className="absolute top-4 right-4 bg-main-color-2 text-black px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg">
-                                  {episode.runtime}m
-                                </div>
-                              )}
-
-                              {/* Air Date */}
-                              {episode.air_date && (
-                                <div className="absolute bottom-4 left-4 bg-black/70 text-gray-300 px-3 py-1 rounded-lg text-xs border border-white/10">
-                                  {new Date(
-                                    episode.air_date
-                                  ).toLocaleDateString()}
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="p-2">
-                              <h4 className="font-bold text-xl mb-3 text-white line-clamp-2 leading-tight group-hover:text-main-color-2 transition-colors">
-                                {episode.name ||
-                                  `Episode ${episode.episode_number}`}
-                              </h4>
-
-                              {episode.overview ? (
-                                <p className="text-gray-300 text-sm line-clamp-3 mb-6 leading-relaxed">
-                                  {episode.overview}
-                                </p>
-                              ) : (
-                                <p className="text-gray-500 text-sm italic mb-6">
-                                  No description available
-                                </p>
-                              )}
-
-                              <button
-                                onClick={() =>
-                                  playEpisode(
-                                    selectedSeason,
-                                    episode.episode_number
-                                  )
-                                }
-                                className="w-full bg-gradient-to-r from-main-color-2 to-yellow-400 text-black py-2 rounded-xl font-bold text-lg flex items-center justify-center gap-3 group/btn"
-                              >
-                                <span className="text-xl transition-transform group-hover/btn:scale-110">
-                                  ▶
-                                </span>
-                                <span>Play Episode</span>
-                              </button>
-
-                              {/* Rating */}
-                              {episode.vote_average > 0 && (
-                                <div className="flex items-center justify-center mt-4 text-sm text-gray-400">
-                                  <span className="text-yellow-400 mr-1">
-                                    ★
-                                  </span>
-                                  {episode.vote_average.toFixed(1)} rating
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 )}
+
+                {/* Episodes Grid - With Images */}
+                <div className="flex-1 overflow-y-auto">
+                  {selectedSeason !== null && (
+                    <div className="p-6">
+                      {episodesLoading ? (
+                        <div className="text-center py-16">
+                          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                          <p className="text-gray-400">Loading episodes...</p>
+                        </div>
+                      ) : episodes.length === 0 ? (
+                        <div className="text-center py-16 text-gray-400">
+                          No episodes available for this season
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {episodes.map((episode) => (
+                            <div
+                              key={episode.id}
+                              className="bg-gray-800 rounded-lg border border-gray-600 hover:border-blue-500 transition-colors duration-150 cursor-pointer"
+                            >
+
+                              <div className="flex justify-between">
+                              <div className="flex-shrink-0 rounded overflow-hidden mr-4">
+                                  <img
+                                    src={
+                                      getImageUrl(episode.still_path, "w200") ||
+                                      getImageUrl(media.backdrop_path, "w200")
+                                    }
+                                    alt={episode.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target =
+                                        e.target as HTMLImageElement;
+                                      target.src = getImageUrl(
+                                        media.backdrop_path,
+                                        "w300"
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              <div className="flex p-4">
+                                {/* Episode Image */}
+                                
+
+                                {/* Episode Info */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-2 mb-2">
+                                    <h4 className="font-semibold text-white text-base line-clamp-1">
+                                      {episode.name ||
+                                        `Episode ${episode.episode_number}`}
+                                    </h4>
+                                    {episode.vote_average > 0 && (
+                                      <div className="flex items-center gap-1 bg-gray-700 rounded px-2 py-1 flex-shrink-0">
+                                        <svg
+                                          className="w-3 h-3 text-yellow-400"
+                                          fill="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                        </svg>
+                                        <span className="text-xs font-medium text-white">
+                                          {episode.vote_average.toFixed(1)}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-3 text-sm text-gray-400 mb-2">
+                                    <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium">
+                                      Episode {episode.episode_number}
+                                    </div>
+                                    {episode.air_date && (
+                                      <span>
+                                        {new Date(
+                                          episode.air_date
+                                        ).toLocaleDateString()}
+                                      </span>
+                                    )}
+                                    {episode.runtime && (
+                                      <span>• {episode.runtime}m</span>
+                                    )}
+                                  </div>
+
+                                  {episode.overview && (
+                                    <p className="text-gray-400 text-sm line-clamp-2">
+                                      {episode.overview}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Play Button - DOES NOT CLOSE MODAL */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openProviderSelection(episode);
+                                  }}
+                                  className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-150 text-sm font-medium flex items-center gap-2 flex-shrink-0 self-center"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                  Play
+                                </button>
+                              </div>
+                            </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* ✅ Video Player Modal */}
-      {showVideoPlayer && playerUrl && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-          <div className="relative w-full h-[100vh] bg-gray-900 rounded-xl overflow-hidden">
-            {/* Player Iframe */}
-            <iframe
-              src={playerUrl}
-              title="Video Player"
-              width="100%"
-              height="100%"
-              className="rounded-xl"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              sandbox="allow-scripts allow-same-origin allow-presentation"
-            />
+      {/* ✅ MODAL: Provider Selection (SECOND STEP) */}
+      {showPlayerModal && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+          <div className="relative w-full max-w-2xl bg-gray-900 rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Select Streaming Provider
+                  </h2>
+                  <p className="text-gray-300 text-sm">
+                    {selectedEpisode
+                      ? `${media.name} - S${selectedSeason} E${selectedEpisode.episode_number}: ${selectedEpisode.name}`
+                      : `${media.title || media.name}`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowPlayerModal(false);
+                    setSelectedEpisode(null);
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all duration-200 ml-4"
+                >
+                  ✕
+                </button>
+              </div>
 
-            {/* Close Button Only */}
-            <button
-              className="absolute top-4 right-4 bg-white text-black w-10 h-10 rounded-full flex items-center justify-center font-bold hover:bg-gray-200 transition z-50"
-              onClick={() => {
-                setShowVideoPlayer(false);
-                setPlayerUrl(null);
-              }}
-            >
-              ✕
-            </button>
+              {/* Provider Selection Grid */}
+              <div className="mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {Object.entries(streamingProviders).map(([key, provider]) => (
+                    <button
+                      key={key}
+                      onClick={() => setSelectedProvider(key)}
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                        selectedProvider === key
+                          ? "border-main-color-2 bg-main-color-2/20 shadow-lg"
+                          : "border-gray-600 bg-gray-800/80 hover:border-gray-400"
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-3xl mb-3">{provider.icon}</div>
+                        <div
+                          className={`text-base font-bold mb-2 ${
+                            selectedProvider === key
+                              ? "text-main-color-2"
+                              : "text-white"
+                          }`}
+                        >
+                          {provider.name}
+                        </div>
+                        <div className="mb-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              selectedProvider === key
+                                ? "bg-main-color-2 text-black"
+                                : "bg-gray-700 text-gray-300"
+                            }`}
+                          >
+                            {provider.quality}
+                          </span>
+                        </div>
+                        <div className="text-xs text-green-400 font-medium">
+                          ✓ Working
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="text-center">
+                <button
+                  onClick={confirmAndPlay}
+                  className="bg-main-color-2 hover:bg-main-color-2/90 text-black px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg"
+                >
+                  ▶ Play Now
+                </button>
+              </div>
+            </div>
           </div>
+        </div>
+      )}
+
+      {/* ✅ Video Player Modal - Full Screen with Only Close Button */}
+      {showVideoPlayer && playerUrl && (
+        <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
+          <button
+            className="absolute top-6 right-6 z-50 bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold transition shadow-lg"
+            onClick={() => {
+              setShowVideoPlayer(false);
+              setPlayerUrl(null);
+              setSelectedEpisode(null);
+            }}
+          >
+            ✕
+          </button>
+
+          <iframe
+            src={playerUrl}
+            title="Video Player"
+            className="w-full h-full"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+            sandbox="allow-scripts allow-same-origin allow-presentation"
+          />
         </div>
       )}
     </>
