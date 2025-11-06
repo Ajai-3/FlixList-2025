@@ -1,4 +1,12 @@
 import http from "http";
 import app from "./app";
+import { config } from "./infrastructure/config/env";
+import { logger } from "./infrastructure/utils/logger";
 
-const server = http.createServer(app)
+const PORT = config.port;
+
+const server = http.createServer(app);
+
+server.listen(PORT, () => {
+  logger.info(`Server is running on port ${PORT} 🎥`);
+});
