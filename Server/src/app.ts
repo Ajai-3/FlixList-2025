@@ -11,6 +11,11 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.get('/', (req, res) => {
+    const userIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(`User IP Address: ${userIP}`);
+    res.send(`Your IP address is: ${userIP}`);
+});
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
