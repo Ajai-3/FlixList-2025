@@ -14,12 +14,12 @@ export class UserRepositoryImp
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = this.model.findOne({ email });
+    const user = await this.model.findOne({ email });
     return this.mapDbToDomain(user)
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    const user = this.model.findOne({ username });
+    const user = await this.model.findOne({ username });
     return this.mapDbToDomain(user)
   }
 

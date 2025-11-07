@@ -61,7 +61,7 @@ export class UserAuthController implements IUserAuthController {
         userId: user.id,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 
