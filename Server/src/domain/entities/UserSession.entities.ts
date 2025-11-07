@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 export class UserSession {
   constructor(
+    public id: string,
     public userId: Types.ObjectId,  
     public device: string,
     public ipAddress?: string,
