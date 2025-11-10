@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import banner1 from "../../assets/Bnners/banner-1.webp";
+import banner1 from "../../../../assets/Bnners/banner-1.webp";
 
 interface MediaProps {
   media: any;

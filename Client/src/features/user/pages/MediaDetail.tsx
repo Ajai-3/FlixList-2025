@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LoadingSkeleton from "../components/Media/LoadingSkeleton";
-import axiosInstance from "../api/AxiosInstance";
+import axiosInstance from "../../../api/AxiosInstance";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import Hero from "../components/Hero/Hero";
@@ -10,7 +10,7 @@ import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
 import { motion } from "framer-motion";
 import Cast from "../components/Media/Cast";
-import { getCast } from "../api/GetCast";
+import { getCast } from "../../../api/GetCast";
 
 const MediaDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();

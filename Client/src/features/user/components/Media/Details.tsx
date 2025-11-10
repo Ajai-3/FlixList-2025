@@ -6,11 +6,11 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { GiLemon } from "react-icons/gi";
 import { IoIosHeart } from "react-icons/io";
-import { languageMap } from "../../constants/LanguageMap";
-import { formatRuntime } from "../../utils/formatRuntime";
-import { formatVoteCount } from "../../utils/formatVoteCount";
-import { formatReleaseDate } from "../../utils/formatDate";
-import axiosInstance from "../../api/AxiosInstance";
+import { languageMap } from "../../../../constants/LanguageMap";
+import { formatRuntime } from "../../../../utils/formatRuntime";
+import { formatVoteCount } from "../../../../utils/formatVoteCount";
+import { formatReleaseDate } from "../../../../utils/formatDate";
+import axiosInstance from "../../../../api/AxiosInstance";
 
 interface MediaProps {
   media: any;
