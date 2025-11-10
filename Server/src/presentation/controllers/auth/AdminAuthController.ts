@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { Request, Response, NextFunction } from "express";
+import { HttpStatus } from "../../../infrastructure/constants/HttpStatus";
 import { IAdminAuthController } from "../../interfaces/auth/IAdminAuthController";
 
 @injectable()
@@ -19,7 +20,7 @@ export class AdminAuthController implements IAdminAuthController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      return res.status(200).json({ message: "Admin logged in successfully" });
+      return res.status(HttpStatus.OK).json({ message: "Admin logged in successfully" });
     } catch (error) {
       next(error);
     }
@@ -38,7 +39,7 @@ export class AdminAuthController implements IAdminAuthController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      return res.status(200).json({ message: "Admin logged in successfully" });
+      return res.status(HttpStatus.OK).json({ message: "Admin logged in successfully" });
     } catch (error) {
       next(error);
     }

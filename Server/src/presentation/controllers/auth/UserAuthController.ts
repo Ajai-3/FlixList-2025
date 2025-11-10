@@ -32,8 +32,10 @@ export class UserAuthController implements IUserAuthController {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
+
+      return res.status(HttpStatus.OK).json({ message: "Login Successfull" })
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 

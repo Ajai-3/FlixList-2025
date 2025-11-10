@@ -4,7 +4,7 @@ dotenv.config();
 
 export const config = {
   port: process.env.PORT,
-  db_url: process.env.DB_URL,
+  db_url: process.env.DB_URL || "",
   redis_url: process.env.REDIS_URL,
   isProd: process.env.NODE_ENV ?? "development",
 } as const;
@@ -13,9 +13,13 @@ export function checkEnv() {
   const missing: string[] = [];
   for (const key in config) {
     const typedKey = key as keyof typeof config;
-    if (config[typedKey] === undefined || config[typedKey] === null) {
+    if (!config[typedKey]) {
       missing.push(key);
     }
   }
-  return missing;
+
+  if (missing.length > 0) {
+    console.error(`❌ Missing environment variables: ${missing.join(", ")}`);
+    process.exit(1);
+  }
 }

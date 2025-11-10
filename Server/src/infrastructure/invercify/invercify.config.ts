@@ -58,4 +58,4 @@ container.bind<IUserAuthController>(TYPES.IUserAuthController).to(UserAuthContro
 container.bind<IAdminAuthController>(TYPES.IAdminAuthController).to(AdminAuthController);
 
 
-export default container
+export { container }
