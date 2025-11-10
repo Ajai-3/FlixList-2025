@@ -33,7 +33,6 @@ import { RefreshController } from "../../presentation/controllers/auth/RefreshCo
 import { UserAuthController } from "../../presentation/controllers/auth/UserAuthController";
 import { AdminAuthController } from "../../presentation/controllers/auth/AdminAuthController";
 
-
 const container = new Container();
 
 // Repositories
