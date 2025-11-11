@@ -1,69 +1,103 @@
-import React, { useState } from 'react';
-import { Popcorn, Film, Clapperboard, Star, Ticket, Video, Camera, Users, Heart, Calendar, Mail } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Mail } from "lucide-react";
+import Input from "../../../../components/ui/Input";
+import Button from "../../../../components/ui/Button";
+
+const COOLDOWN_SECONDS = 60;
 
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("reset_email_cooldown");
+    if (!saved) return;
+
+    const expiresAt = parseInt(saved, 10);
+    const remaining = Math.floor((expiresAt - Date.now()) / 1000);
+
+    if (remaining > 0) setCooldown(remaining);
+  }, []);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((sec) => sec - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const startCooldown = () => {
+    const expireTime = Date.now() + COOLDOWN_SECONDS * 1000;
+    localStorage.setItem("reset_email_cooldown", expireTime.toString());
+    setCooldown(COOLDOWN_SECONDS);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Reset password for:', email);
+    console.log("Send reset link to:", email);
+    startCooldown();
+  };
+
+  const handleResend = () => {
+    if (cooldown > 0) return;
+    console.log("Resending email to:", email);
+    startCooldown();
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 relative overflow-hidden">
-      {/* Movie Icons Background */}
-      <div className="absolute inset-0 opacity-[0.03]">
-        <Film className="absolute top-6 left-6 w-18 h-18 text-white animate-float" />
-        <Clapperboard className="absolute top-14 right-10 w-20 h-20 text-white animate-float" style={{ animationDelay: '1s' }} />
-        <Star className="absolute top-38 left-14 w-16 h-16 text-white animate-float" style={{ animationDelay: '2s' }} />
-        <Ticket className="absolute bottom-34 right-14 w-14 h-14 text-white animate-float" style={{ animationDelay: '1.5s' }} />
-        <Video className="absolute bottom-22 left-18 w-16 h-16 text-white animate-float" style={{ animationDelay: '0.5s' }} />
-        <Camera className="absolute bottom-14 left-14 w-20 h-20 text-white animate-float" style={{ animationDelay: '3s' }} />
-        <Users className="absolute bottom-18 right-18 w-18 h-18 text-white animate-float" style={{ animationDelay: '1.2s' }} />
-        <Heart className="absolute top-26 left-30 w-14 h-14 text-white animate-float" style={{ animationDelay: '1.8s' }} />
-      </div>
-
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <Mail className="w-12 h-12 text-main-color-1" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-main-color-1 to-main-color-2 bg-clip-text text-transparent ml-3">
-              FlixList
-            </h1>
-          </div>
-          <p className="text-gray-400 text-lg">Reset Your Password</p>
-          <p className="text-gray-500 text-sm mt-2">Enter your email to receive reset instructions</p>
+    <div className="w-full max-w-md">
+      <div className="text-center mb-10">
+        <div className="flex items-center justify-center mb-4">
+          <Mail className="w-8 h-8 text-main-color-3" />
+          <h1 className="text-4xl font-bold text-white ml-2">FlixList</h1>
         </div>
 
-        <div className="bg-gray-800/90 backdrop-blur-lg rounded-2xl border border-gray-700 p-8 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-4 bg-gray-900/80 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-main-color-1 focus:border-transparent"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
+        <h2 className="text-3xl font-bold text-white mb-2">Forgot Password</h2>
+        <p className="text-zinc-400 text-sm">
+          Enter your email to receive reset instructions.
+        </p>
+      </div>
 
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-main-color-1 to-main-color-2 text-gray-900 py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-main-color-1/25 transform hover:scale-[1.02] transition-all text-lg"
-            >
-              Send Reset Link
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-400">
-              Remember your password?{' '}
-              <a href="/login" className="text-main-color-1 hover:text-main-color-2 font-semibold">
-                Back to login
-              </a>
-            </p>
+      <div className="p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-zinc-200 mb-2">
+              Email Address
+            </label>
+            <Input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              inputSize="sm"
+            />
           </div>
+
+          <Button
+            variant="auth"
+            size="sm"
+            type={cooldown > 0 ? "button" : "submit"}
+            onClick={cooldown > 0 ? handleResend : undefined}
+            disabled={cooldown > 0} // Disable button during cooldown
+            className={cooldown > 0 ? "opacity-50 cursor-not-allowed" : ""}
+          >
+            {cooldown > 0
+              ? `Resend in ${cooldown}s`
+              : "Send Reset Link"}
+          </Button>
+        </form>
+
+        <div className="text-center mt-4 text-zinc-400 text-sm">
+          Remember your password?{" "}
+          <a
+            href="/auth/login"
+            className="font-semibold text-main-color-3 hover:text-emerald-600"
+          >
+            Sign in
+          </a>
         </div>
       </div>
     </div>
