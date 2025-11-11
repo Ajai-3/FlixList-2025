@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
 import { Mail } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
+import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
 
 const COOLDOWN_SECONDS = 60;
 
@@ -41,66 +42,53 @@ const ForgotPassword: React.FC = () => {
     startCooldown();
   };
 
-  const handleResend = () => {
-    if (cooldown > 0) return;
-    console.log("Resending email to:", email);
-    startCooldown();
-  };
-
   return (
-    <div className="w-full max-w-md">
-      <div className="text-center mb-10">
-        <div className="flex items-center justify-center mb-4">
-          <Mail className="w-8 h-8 text-main-color-3" />
-          <h1 className="text-4xl font-bold text-white ml-2">FlixList</h1>
+    <AuthPageWrapper
+      title="Forgot Password"
+      subtitle=""
+      linkText=""
+      linkHref=""
+      icon={<Mail className="w-8 h-8 text-main-color-3" />}
+    >
+      <p className="text-zinc-400 text-sm mb-6 text-center">
+        Enter your email to receive reset instructions.
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-zinc-200 mb-2">
+            Email Address
+          </label>
+          <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            inputSize="sm"
+          />
         </div>
 
-        <h2 className="text-3xl font-bold text-white mb-2">Forgot Password</h2>
-        <p className="text-zinc-400 text-sm">
-          Enter your email to receive reset instructions.
-        </p>
-      </div>
+        <Button
+          variant="auth"
+          size="sm"
+          type="submit"
+          disabled={cooldown > 0}
+          className={cooldown > 0 ? "opacity-50 cursor-not-allowed" : ""}
+        >
+          {cooldown > 0 ? `Resend in ${cooldown}s` : "Send Reset Link"}
+        </Button>
+      </form>
 
-      <div className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-zinc-200 mb-2">
-              Email Address
-            </label>
-            <Input
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              inputSize="sm"
-            />
-          </div>
-
-          <Button
-            variant="auth"
-            size="sm"
-            type={cooldown > 0 ? "button" : "submit"}
-            onClick={cooldown > 0 ? handleResend : undefined}
-            disabled={cooldown > 0} // Disable button during cooldown
-            className={cooldown > 0 ? "opacity-50 cursor-not-allowed" : ""}
-          >
-            {cooldown > 0
-              ? `Resend in ${cooldown}s`
-              : "Send Reset Link"}
-          </Button>
-        </form>
-
-        <div className="text-center mt-4 text-zinc-400 text-sm">
-          Remember your password?{" "}
-          <a
-            href="/auth/login"
-            className="font-semibold text-main-color-3 hover:text-emerald-600"
-          >
-            Sign in
-          </a>
-        </div>
-      </div>
-    </div>
+      <p className="text-zinc-400 text-sm text-center mt-4">
+        Remember your password?{" "}
+        <a
+          href="/auth/login"
+          className="font-semibold text-main-color-3 hover:text-main-color-4"
+        >
+          Sign in
+        </a>
+      </p>
+    </AuthPageWrapper>
   );
 };
 
