@@ -4,13 +4,19 @@ import { limits } from "../../../infrastructure/rateLimit/index";
 import { container } from "../../../infrastructure/invercify/invercify.config";
 import { IUserAuthController } from "../../interfaces/auth/IUserAuthController";
 import { IAdminAuthController } from "./../../interfaces/auth/IAdminAuthController";
+import { ISessionController } from "../../interfaces/auth/ISessionController";
 
 const router = express.Router();
 
 const userAuth = container.get<IUserAuthController>(TYPES.IUserAuthController);
+const sessionAuth = container.get<ISessionController>(TYPES.ISessionController);
 const adminAuth = container.get<IAdminAuthController>(
   TYPES.IAdminAuthController
 );
+
+// SESSION ROUTES
+router.get("/bootstrap", limits.session, sessionAuth.bootstrap as RequestHandler)
+router.get("/refresh-token", limits.session, sessionAuth.refreshToken as RequestHandler)
 
 // USER AUTH ROUTES
 router.post("/user/login", limits.userLogin, userAuth.userLogin as RequestHandler);

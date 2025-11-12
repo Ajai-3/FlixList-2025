@@ -14,7 +14,7 @@ export const TYPES = {
   IVerifyPendingUserUseCase: Symbol.for("IVerifyPendingUserUseCase"),
   
   // Controller
-  IRefreshController: Symbol.for("IRefreshController"),
+  ISessionController: Symbol.for("ISessionController"),
   IUserAuthController: Symbol.for("IUserAuthController"),
   IAdminAuthController: Symbol.for("IAdminAuthController"),
 };

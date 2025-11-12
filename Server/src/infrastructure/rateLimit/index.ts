@@ -9,6 +9,7 @@ type LimitRegistry = {
   testLimit: RateLimitRequestHandler;
 
   // auth
+  session: RateLimitRequestHandler;
   userLogin: RateLimitRequestHandler;
   userRegister: RateLimitRequestHandler;
   userVerifyOtp: RateLimitRequestHandler;
@@ -25,6 +26,7 @@ export const initRateLimits = () => {
   limits.testLimit = createLimit(testLimitConfig);
 
    // auth – turn configs into middleware
+  limits.session = createLimit(authCfg.sessionLimit);
   limits.userLogin     = createLimit(authCfg.userLoginLimit);
   limits.userRegister  = createLimit(authCfg.userRegisterLimit);
   limits.userVerifyOtp = createLimit(authCfg.userVerifyOtpLimit);
