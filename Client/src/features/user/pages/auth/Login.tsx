@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
@@ -61,9 +62,9 @@ const Login: React.FC = () => {
 
       <div className="mt-6 flex items-center justify-between text-zinc-300 text-sm">
         <Checkbox label="Remember me" variant="emerald" />
-        <a href="/auth/forgot-password" className="hover:text-emerald-500">
+        <Link to="/auth/forgot-password" className="hover:text-emerald-500">
           Trouble logging in?
-        </a>
+        </Link>
       </div>
 
       <div className="mt-6 flex justify-center">

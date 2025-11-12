@@ -1,4 +1,5 @@
 import { Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
@@ -81,12 +82,12 @@ const ForgotPassword: React.FC = () => {
 
       <p className="text-zinc-400 text-sm text-center mt-4">
         Remember your password?{" "}
-        <a
-          href="/auth/login"
+        <Link
+          to="/auth/login"
           className="font-semibold text-main-color-3 hover:text-main-color-4"
         >
           Sign in
-        </a>
+        </Link>
       </p>
     </AuthPageWrapper>
   );

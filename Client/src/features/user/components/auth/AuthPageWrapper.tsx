@@ -1,5 +1,6 @@
 import React from "react";
-import { Popcorn, Shield, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Popcorn } from "lucide-react";
 
 interface AuthPageProps {
   title: string;
@@ -16,7 +17,7 @@ const AuthPageWrapper: React.FC<AuthPageProps> = ({
   linkText,
   linkHref,
   children,
-  icon = <Popcorn className="w-8 h-8 text-main-color-3" />
+  icon = <Popcorn className="w-8 h-8 text-main-color-3" />,
 }) => {
   return (
     <div className="w-full max-w-md">
@@ -28,17 +29,15 @@ const AuthPageWrapper: React.FC<AuthPageProps> = ({
         <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
         <p className="text-zinc-400 text-sm">
           {subtitle}{" "}
-          <a
-            href={linkHref}
+          <Link
+            to={linkHref}
             className="font-semibold text-main-color-3 hover:text-main-color-4"
           >
             {linkText}
-          </a>
+          </Link>
         </p>
       </div>
-      <div className="p-8">
-        {children}
-      </div>
+      <div className="p-8">{children}</div>
     </div>
   );
 };
