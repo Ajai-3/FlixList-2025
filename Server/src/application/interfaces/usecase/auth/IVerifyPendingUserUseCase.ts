@@ -1,3 +1,6 @@
+import { VerifyOtpDTO } from "../../dto/auth/VerifyOtpDTO";
+import { VerifyOtpResponseDTO } from "../../dto/auth/VerifyOtpResponseDTO";
+
 export interface IVerifyPendingUserUseCase {
-  execute(userId: string, otp: string): Promise<{ success: boolean }>;
+  execute(dto: VerifyOtpDTO): Promise<VerifyOtpResponseDTO>;
 }

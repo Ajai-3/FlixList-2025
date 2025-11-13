@@ -1,16 +1,16 @@
 import bcrypt from "bcryptjs";
 import { inject, injectable } from "inversify";
-import { Role } from "../../../domain/entities/User.entities";
+import { Role } from "../../../domain/entities/User";
 import { TYPES } from "../../../infrastructure/invercify/types";
-import { IOtpService } from "../../../domain/service/IOtpService";
+import { IOtpService } from "../../interfaces/services/IOtpService";
 import { ConflictError } from "../../../domain/errors/ConflictError";
 import { BadrequestError } from "../../../domain/errors/BadrequestError";
+import { UserRegisterDTO } from "../../interfaces/dto/auth/UserRegisterDTO";
+import { UserResponseDTO } from "../../interfaces/dto/auth/UserResponseDTO";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { generateUsername } from "../../../infrastructure/utils/generateUsername";
 import { IUserRegisterUseCase } from "../../interfaces/usecase/auth/IUserRegisterUseCase";
-import {
-  UserRegisterDTO,
-  UserResponseDTO,
-} from "../../interfaces/dto/auth/UserRegisterDTO";
+import { UserMapper } from "../../mappers/UserMapper";
 
 @injectable()
 export class UserRegisterUseCase implements IUserRegisterUseCase {
@@ -19,20 +19,25 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
     @inject(TYPES.IUserRepository) private readonly _userRepo: IUserRepository
   ) {}
 
-  async execute(data: UserRegisterDTO): Promise<UserResponseDTO> {
-    const { name, username, email, password } = data;
+  async execute(dto: UserRegisterDTO): Promise<UserResponseDTO> {
+    const { name, email, password } = dto;
 
     const user = await this._userRepo.findByEmail(email);
 
     // ──► already verified and active → conflict
     if (user?.isVerified && user.status === "active") {
-      if (user.username === username) {
-        throw new ConflictError("Username already exists");
-      }
       throw new ConflictError("Email already exists");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    let username = generateUsername(name);
+
+    const existUsername = await this._userRepo.findByUsername(username);
+
+    if (existUsername) {
+      throw new ConflictError("Username already exists");
+    }
 
     if (!user) {
       const newUser = await this._userRepo.create({
@@ -46,7 +51,7 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
       });
 
       await this._otpService.sendOtp(newUser.id);
-      return { id: newUser.id, name: newUser.name, username: newUser.username };
+      return UserMapper.toResponseDTO(newUser);
     }
 
     // user exists but is not verified → update and resend OTP
@@ -67,10 +72,6 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
     }
 
     await this._otpService.sendOtp(updatedUser.id);
-    return {
-      id: updatedUser.id,
-      name: updatedUser.name,
-      username: updatedUser.username,
-    };
+    return UserMapper.toResponseDTO(updatedUser);
   }
 }

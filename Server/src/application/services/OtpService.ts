@@ -1,11 +1,10 @@
-import { IOtpService } from './../../domain/service/IOtpService';
+import { IOtpService } from "../interfaces/services/IOtpService";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../infrastructure/invercify/types";
 import { IOtpRepository } from "../../domain/repositories/IOtpRepository";
 
 @injectable()
 export class OtpService implements IOtpService {
-
   constructor(
     @inject(TYPES.IOtpRepository) private readonly _otpRepo: IOtpRepository
   ) {}
@@ -13,12 +12,13 @@ export class OtpService implements IOtpService {
   generateNumericOtp(length = 6): string {
     return Math.floor(Math.random() * Math.pow(10, length))
       .toString()
-      .padStart(length, '0');
+      .padStart(length, "0");
   }
 
   async sendOtp(userId: string): Promise<string> {
     const otp = this.generateNumericOtp(6);
     await this._otpRepo.createOtp(userId, otp);
+    console.log(otp);
     // TODO: Send via SMS/Email (example call)
     // await smsService.send(userPhone, otp);
     return otp;
@@ -28,7 +28,7 @@ export class OtpService implements IOtpService {
     return await this._otpRepo.verifyOtp(userId, otp);
   }
 
-   async canResendOtp(userId: string): Promise<boolean> {
+  async canResendOtp(userId: string): Promise<boolean> {
     const lastSent = await this._otpRepo.getLastOtpTime(userId);
     if (!lastSent) return true;
 
