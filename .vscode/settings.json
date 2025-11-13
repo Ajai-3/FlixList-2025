@@ -1,7 +1,4 @@
 {
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#253209",
-        "titleBar.activeBackground": "#33460C",
-        "titleBar.activeForeground": "#F8FCEF"
-    }
+  "workbench.colorTheme": "Dark Magic Night",
+  "workbench.preferredDarkColorTheme": "Dark Magic"
 }

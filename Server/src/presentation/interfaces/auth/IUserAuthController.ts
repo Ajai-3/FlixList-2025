@@ -21,6 +21,16 @@ export interface IUserAuthController {
     res: Response,
     next: NextFunction
   ) => Promise<Response | void>;
+  forgotPassword: (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => Promise<Response | void>;
+  resetPassword: (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => Promise<Response | void>;
   userLogout: (
     req: Request,
     res: Response,
