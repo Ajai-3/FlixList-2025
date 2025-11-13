@@ -1,10 +1,10 @@
-import { Types } from "mongoose";
+export type deviceType = "desktop" | "mobile" | "tablet" | "unknown"
 
 export class UserSession {
   constructor(
     public id: string,
-    public userId: Types.ObjectId,  
-    public device: string,
+    public userId: string,  
+    public device: deviceType = "unknown",
     public ipAddress?: string,
     public userAgent?: string,
     public lastActivity?: Date,    

@@ -1,13 +1,17 @@
 import { Document, Schema, model } from "mongoose";
-import { UserSession } from '../../domain/entities/UserSession.entities';
+import { deviceType, UserSession } from "../../domain/entities/UserSession";
 
-
-export interface IUserSessionDocument extends Omit<UserSession, 'id'> {}
+export interface IUserSessionDocument extends Omit<UserSession, "id"> {}
 
 const UserSessionSchema = new Schema<IUserSessionDocument>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    device: { type: String, required: true },
+    userId: { type: String, required: true },
+    device: {
+      type: String,
+      enum: ["desktop", "mobile", "tablet", "unknown"] as deviceType[],
+      default: "unknown",
+      required: true,
+    },
     ipAddress: { type: String },
     userAgent: { type: String },
     lastActivity: { type: Date, default: Date.now },
