@@ -20,7 +20,7 @@ export const userLoginLimit = {
 
 export const userRegisterLimit = {
   windowMin: 10,
-  max: 5,
+  max: 6,
   message: 'Registration attempts exceeded.',
   keyGen: (req: any) => `user:reg:${req.ip}`
 };
@@ -40,8 +40,8 @@ export const userResendOtpLimit = {
 };
 
 export const userForgotPasswordLimit = {
-  windowMin: 5,
-  max: 3,       
+  windowMin: 10,
+  max: 6,       
   message: 'Too many password reset requests. Please try again later.',
   keyGen: (req: any) => `user:forgot-pass:${req.ip}:${req.body?.identifier ?? 'anon'}`
 };

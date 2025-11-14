@@ -106,4 +106,4 @@ container
   .bind<IAdminAuthController>(TYPES.IAdminAuthController)
   .to(AdminAuthController);
 
-export { container };
+export { container };               
