@@ -8,6 +8,10 @@ const OTPPage = lazy(() => import("@/features/user/pages/auth/OTPPage"));
 const ForgotPassword = lazy(
   () => import("@/features/user/pages/auth/ForgotPassword")
 );
+const ResetPassword = lazy(
+  () => import("@/features/user/pages/auth/ResetPassword")
+);
+
 const MediaDetail = lazy(() => import("@/features/user/pages/MediaDetail"));
 
 export const userRoutes = [
@@ -27,6 +31,7 @@ export const userRoutes = [
       { path: "signup", element: <SignUp /> },
       { path: "verify-otp", element: <OTPPage /> },
       { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "reset-password", element: <ResetPassword /> },
     ],
   },
 ];
