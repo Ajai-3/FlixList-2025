@@ -1,15 +1,50 @@
 import { Mail } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import FormError from "@/components/ui/FormError";
 import React, { useState, useEffect } from "react";
 import Input from "../../../../components/ui/Input";
 import Button from "../../../../components/ui/Button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import AuthLinkLine from "@/components/ui/AuthLinkLine";
 import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
+import { useForgotPasswordMutation } from "../../hooks/auth/useForgotPasswordMutation";
+import {
+  ForgotPasswordInput,
+  forgotPasswordSchema,
+} from "../../validation/auth/forgotPassword.shcema";
+import CustomLoader from "@/components/CustomLoader";
 
-const COOLDOWN_SECONDS = 60;
+const COOLDOWN_SECONDS = 120;
 
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [serverError, setServerError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+
+  const forgotPasswordMutation = useForgotPasswordMutation();
+
+  const onSubmit = (data: ForgotPasswordInput) => {
+    const identifier = data.identifier;
+    forgotPasswordMutation.mutate(identifier, {
+      onSuccess: (data) => {
+        setServerError("")
+        setMessage(data.message);
+        startCooldown();
+        reset();
+      },
+      onError: (error: any) => {
+        setServerError(error.message || "Something went wrong");
+      },
+    });
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem("reset_email_cooldown");
@@ -25,7 +60,10 @@ const ForgotPassword: React.FC = () => {
     if (cooldown <= 0) return;
 
     const timer = setInterval(() => {
-      setCooldown((sec) => sec - 1);
+      setCooldown((sec) => {
+        if (sec - 1 <= 0) localStorage.removeItem("reset_email_cooldown");
+        return sec - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
@@ -37,58 +75,64 @@ const ForgotPassword: React.FC = () => {
     setCooldown(COOLDOWN_SECONDS);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Send reset link to:", email);
-    startCooldown();
-  };
-
   return (
     <AuthPageWrapper
       title="Forgot Password"
+      error={serverError}
       subtitle=""
       linkText=""
       linkHref=""
       icon={<Mail className="w-8 h-8 text-main-color-3" />}
     >
-      <p className="text-zinc-400 text-sm mb-6 text-center">
-        Enter your email to receive reset instructions.
+      <p
+        className={`${
+          message ? "text-main-color-3" : "text-zinc-400"
+        } text-sm mb-6 text-center`}
+      >
+        {message ? message : "Enter your email to receive reset instructions."}
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-zinc-200 mb-2">
-            Email Address
+          <label className="block text-sm font-medium text-zinc-200 mb-1">
+            Email or Username
           </label>
+
           <Input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Enter your email or username"
             inputSize="sm"
+            {...register("identifier")}
           />
+          <FormError message={errors?.identifier?.message || ""} />
         </div>
 
         <Button
           variant="auth"
           size="sm"
           type="submit"
-          disabled={cooldown > 0}
+          disabled={
+            cooldown > 0 ||
+            Boolean(errors.identifier) ||
+            forgotPasswordMutation.isPending
+          }
           className={cooldown > 0 ? "opacity-50 cursor-not-allowed" : ""}
         >
-          {cooldown > 0 ? `Resend in ${cooldown}s` : "Send Reset Link"}
+          {forgotPasswordMutation.isPending ? (
+            <CustomLoader />
+          ) : cooldown > 0 ? (
+            `Resend in ${cooldown}s`
+          ) : (
+            "Send Reset Link"
+          )}
         </Button>
       </form>
 
-      <p className="text-zinc-400 text-sm text-center mt-4">
-        Remember your password?{" "}
-        <Link
-          to="/auth/login"
-          className="font-semibold text-main-color-3 hover:text-main-color-4"
-        >
-          Sign in
-        </Link>
-      </p>
+      <AuthLinkLine
+        text="Remember your password?"
+        linkText="Sign in"
+        linkTo="/auth/login"
+      />
     </AuthPageWrapper>
   );
 };
