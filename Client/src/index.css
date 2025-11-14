@@ -8,15 +8,6 @@ body {
   @apply bg-black text-white;
 }
 
-/* Hide scrollbar */
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hidden {
-  -ms-overflow-style: none; /* For Internet Explorer */
-  scrollbar-width: none; /* For Firefox */
-}
 
 
 * {
@@ -60,4 +51,16 @@ textarea:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--input-color) !important;
   box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
   caret-color: var(--input-color);
+}
+
+
+
+/* Hide scrollbar */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* For Internet Explorer */
+  scrollbar-width: none; /* For Firefox */
 }
