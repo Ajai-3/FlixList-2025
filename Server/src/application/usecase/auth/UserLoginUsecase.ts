@@ -22,13 +22,17 @@ export class UserLoginUseCase implements IUserLoginUseCase {
   async execute(dto: LoginDTO): Promise<UserResponseDTO> {
     const { identifier, password } = dto;
 
+    console.log(identifier, password);
+
     const user = await this._userRepo.findByEmailOrUsername(identifier);
     if (!user) {
+      console.log("User not found");
       throw new BadrequestError("Invalid email or password");
     }
 
-    const isPassword = await bcrypt.compare(user.password, password);
+    const isPassword = await bcrypt.compare(password, user.password);
     if (!isPassword) {
+      console.log("Password not match");
       throw new BadrequestError("Invalid email or password");
     }
 
