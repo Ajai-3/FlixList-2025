@@ -11,12 +11,14 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { generateUsername } from "../../../infrastructure/utils/generateUsername";
 import { IUserRegisterUseCase } from "../../interfaces/usecase/auth/IUserRegisterUseCase";
 import { UserMapper } from "../../mappers/UserMapper";
+import { IEmailService } from "../../interfaces/services/IEmailService";
 
 @injectable()
 export class UserRegisterUseCase implements IUserRegisterUseCase {
   constructor(
     @inject(TYPES.IOtpService) private readonly _otpService: IOtpService,
-    @inject(TYPES.IUserRepository) private readonly _userRepo: IUserRepository
+    @inject(TYPES.IUserRepository) private readonly _userRepo: IUserRepository,
+    @inject(TYPES.IEmailService) private readonly _emailService: IEmailService,
   ) {}
 
   async execute(dto: UserRegisterDTO): Promise<UserResponseDTO> {
@@ -68,7 +70,9 @@ export class UserRegisterUseCase implements IUserRegisterUseCase {
 
     const canSend = await this._otpService.canResendOtp(updatedUser.id);
     if (!canSend) {
-      throw new BadrequestError("Please wait before requesting OTP again");
+      throw new BadrequestError(
+        "Too many OTP requests. Wait for the cooldown to finish before trying again."
+      );
     }
 
     await this._otpService.sendOtp(updatedUser.id);
