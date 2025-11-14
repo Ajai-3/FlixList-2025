@@ -17,7 +17,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
     const user = await this._userRepo.findByEmail(email);
 
     if (!user) throw new NotFoundError("User not found");
-    if (user.isVerified) throw new BadrequestError("User is already verified");
+    if (user.isVerified) throw new BadrequestError("User is already verified, please login.");
 
     const canSend = await this._otpService.canResendOtp(user.id);
     if (!canSend)
