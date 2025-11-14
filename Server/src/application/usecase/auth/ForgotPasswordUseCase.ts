@@ -5,10 +5,10 @@ import { NotFoundError } from "../../../domain/errors/NotFoundError";
 import { ITokenService } from "../../interfaces/services/ITokenService";
 import { IEmailService } from "../../interfaces/services/IEmailService";
 import { ICacheClient } from "../../../domain/repositories/ICacheClient";
+import { BadrequestError } from "../../../domain/errors/BadrequestError";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ForgotPasswordDTO } from "../../interfaces/dto/auth/ForgotPasswordDTO";
 import { IForgotPasswordUseCase } from "../../interfaces/usecase/auth/IForgotPasswordUseCase";
-import { BadrequestError } from "../../../domain/errors/BadrequestError";
 
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
@@ -20,7 +20,7 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
     private readonly _tokenService: ITokenService
   ) {}
 
-  async execute(dto: ForgotPasswordDTO): Promise<void> {
+  async execute(dto: ForgotPasswordDTO): Promise<string> {
     const { identifier, ipAddress, userAgent } = dto;
 
     console.log(dto)
@@ -44,7 +44,7 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
 
     const token = this._tokenService.generateToken(payload, "email");
 
-    const resetLink = `${config.frontend_url}/reset-password?token=${token}`;
+    const resetLink = `${config.frontend_url}/auth/reset-password?token=${token}`;
 
 
     await this._cacheClient.setEx(tokenKey, 600, token);
@@ -61,5 +61,9 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
         <p>If you didn’t request this, ignore this email.</p>
       `,
     });
+
+    let userEmail = user.email[0] + "*******" + user.email[user.email.length - 1] + "@gmail.com";
+    let message = `We sent an email to ${userEmail} with a link to get back into your account.`;
+    return message;
   }
 }

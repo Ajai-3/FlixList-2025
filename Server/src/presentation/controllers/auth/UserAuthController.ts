@@ -113,7 +113,7 @@ export class UserAuthController implements IUserAuthController {
       const userAgent = req.headers["user-agent"] as string;
 
       const dto: VerifyOtpDTO = { email, otp, ipAddress, userAgent };
-      const { accessToken, refreshToken } =
+      const { accessToken, refreshToken, user } =
         await this._verifyPendingUserUseCase.execute(dto);
 
       res.cookie("refresh_token", refreshToken, {
@@ -124,9 +124,10 @@ export class UserAuthController implements IUserAuthController {
         path: "/api/v1/auth/refresh-token",
       });
 
-      return res
-        .status(HttpStatus.OK)
-        .json({ message: "User verified successfully", accessToken });
+      return res.status(HttpStatus.OK).json({
+        message: "User verified successfully",
+        data: { user, accessToken },
+      });
     } catch (error) {
       next(error);
     }
@@ -176,11 +177,9 @@ export class UserAuthController implements IUserAuthController {
       const userAgent = req.headers["user-agent"] as string;
 
       const dto: ForgotPasswordDTO = { identifier, ipAddress, userAgent };
-      await this._forgotPasswordUseCase.execute(dto);
+      const message = await this._forgotPasswordUseCase.execute(dto);
 
-      return res
-        .status(HttpStatus.OK)
-        .json({ message: "Verification link sented" });
+      return res.status(HttpStatus.OK).json({ message: message });
     } catch (error) {
       next(error);
     }
