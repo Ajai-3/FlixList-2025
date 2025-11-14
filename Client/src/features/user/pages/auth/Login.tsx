@@ -1,21 +1,38 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import FormError from "@/components/ui/FormError";
 import Input from "../../../../components/ui/Input";
+import CustomLoader from "@/components/CustomLoader";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../../../../components/ui/Button";
 import Checkbox from "../../../../components/ui/Checkbox";
 import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
+import { useLoginMutation } from "../../hooks/auth/useLoginMutation";
+import { loginSchema, LoginInput } from "../../validation/auth/login.schema";
 
 const Login: React.FC = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [serverError, setServerError] = useState<string>("");
+  const loginMutation = useLoginMutation();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login data:", formData);
+  const onSubmit = (data: LoginInput) => {
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        setServerError("");
+      },
+      onError: (error: any) => {
+        setServerError(error.message || "Something went wrong");
+      },
+    });
   };
 
   return (
@@ -24,39 +41,44 @@ const Login: React.FC = () => {
       subtitle="New to FlixList?"
       linkText="Sign up"
       linkHref="/auth/signup"
+      error={serverError}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
         <div>
-          <label className="block text-sm font-medium text-zinc-200 mb-2">
-            Your email address
+          <label className="block text-sm font-medium text-zinc-200 mb-1">
+            Email or username
           </label>
           <Input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
+            type="text"
+            placeholder="Enter your email or username"
+            {...register("identifier")}
             inputSize="sm"
           />
+          <FormError message={errors.identifier?.message || ""} />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-zinc-200 mb-2">
-            Your password
+          <label className="block text-sm font-medium text-zinc-200 mb-1">
+            Password
           </label>
           <Input
-            name="password"
             type="password"
             password
-            value={formData.password}
-            onChange={handleChange}
             placeholder="Enter your password"
+            {...register("password")}
             inputSize="sm"
           />
+          <FormError message={errors.password?.message} />
         </div>
 
-        <Button variant="auth" size="sm">
-          Log in
+        <Button
+          variant="auth"
+          size="sm"
+          type="submit"
+          disabled={loginMutation.isPending}
+          // className="flex justify-center items-center"
+        >
+          {loginMutation.isPending ? <CustomLoader /> : "Log in"}
         </Button>
       </form>
 
