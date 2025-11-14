@@ -10,9 +10,10 @@ export class UserMapper {
       user: {
         id: user.id,
         name: user.name,
-        username: user.username,
-        avatarKey: user.avatarKey,
+        role: user.role,
         status: user.status,
+        username: user.username,
+        avatarKey: user.avatarKey || null,
         isVerified: user.isVerified,
       },
       accessToken: tokens?.accessToken,

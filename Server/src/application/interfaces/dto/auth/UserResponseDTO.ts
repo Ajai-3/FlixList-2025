@@ -1,13 +1,14 @@
-import { Status } from "../../../../domain/entities/User";
+import { Role, Status } from "../../../../domain/entities/User";
 
 export interface UserResponseDTO {
   user: {
     id: string;
+    role: Role;
     name: string;
     status: Status;
     username: string;
     isVerified: boolean;
-    avatarKey?: string | null;
+    avatarKey: string | null;
   };
   accessToken?: string;
   refreshToken?: string;
