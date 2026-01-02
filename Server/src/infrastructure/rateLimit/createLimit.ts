@@ -1,6 +1,6 @@
 import redisClient from '../config/redis';
 import { RedisStore } from 'rate-limit-redis';
-import { RateLimitRequestHandler, rateLimit, ipKeyGenerator } from 'express-rate-limit';
+import { RateLimitRequestHandler, rateLimit } from 'express-rate-limit';
 import { Request } from 'express';
 
 type Opts = {
@@ -25,8 +25,8 @@ export function createLimit(opts: Opts): RateLimitRequestHandler {
     max: opts.max,
     message: { success: false, message: opts.message },
     keyGenerator: opts.keyGen
-      ? async (req: any) => `${await opts.keyGen!(req)}:${ipKeyGenerator(req)}`
-      : (req: any) => ipKeyGenerator(req),
+      ? async (req: Request) => await opts.keyGen!(req)
+      : (req: Request) => req.ip || '127.0.0.1',
     standardHeaders: true,
     legacyHeaders: false,
   });

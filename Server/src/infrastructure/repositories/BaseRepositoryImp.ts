@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Model, Types, Document } from "mongoose";
+import { Model, Types } from "mongoose";
 
 @injectable()
 export abstract class BaseRepositoryImp<T> {

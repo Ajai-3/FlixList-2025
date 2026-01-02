@@ -1,6 +1,5 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { User, Role, Status } from "../../domain/entities/User";
-import { boolean } from "zod";
 
 export interface IUserDocument extends Omit<User, "id"> {}
 

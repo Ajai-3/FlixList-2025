@@ -1,4 +1,6 @@
 {
+  "workbench.sideBar.location": "right",
   "workbench.colorTheme": "Dark Magic Night",
-  "workbench.preferredDarkColorTheme": "Dark Magic"
+  "editor.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true
 }
