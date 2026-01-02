@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import AuthLayout from "@/features/user/layouts/AuthLayout";
+import AuthLayout from "@/features/auth/layout/AuthLayout";
 
 const Home = lazy(() => import("@/features/user/pages/Home"));
 const Login = lazy(() => import("@/features/user/pages/auth/Login"));

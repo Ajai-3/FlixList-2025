@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
-// import App from "./App.tsx";
 import { QueryProvider } from "./api/providers/QueryClient.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
