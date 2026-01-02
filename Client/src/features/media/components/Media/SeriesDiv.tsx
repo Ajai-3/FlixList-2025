@@ -8,9 +8,10 @@ interface SeriesDivProps {
     season_number: number;
     episode_count: number;
   };
+  onClick: () => void;
 }
 
-const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
+const SeriesDiv: React.FC<SeriesDivProps> = ({ season, onClick }) => {
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
@@ -30,7 +31,8 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season }) => {
 
   return (
     <motion.div
-      className="relative w-36"
+      className="relative w-36 cursor-pointer"
+      onClick={onClick}
       whileHover={{
         scale: 1.05,
         transition: { type: "spring", stiffness: 300, damping: 10 }

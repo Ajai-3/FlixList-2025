@@ -1,8 +1,8 @@
-import apiClient from "@/api/axios";
-import { User } from "@/types/user";
+import apiClient from "@/app/api/axios";
+import { User } from "@/app/types/user";
 import toast from "react-hot-toast";
-import { useAppDispatch } from "@/redux/hooks";
-import { setUser } from "@/redux/slices/userSlice";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { setUser } from "@/app/redux/slices/userSlice";
 import { useMutation } from "@tanstack/react-query";
 
 interface LoginPayload {

@@ -9,7 +9,7 @@ import {
   fetchTopMovies,
   fetchTvSeries,
   fetchAnime,
-} from "../../../../api/TmdbApi";
+} from "@/app/api/TmdbApi";
 
 interface Movie {
   id: number;

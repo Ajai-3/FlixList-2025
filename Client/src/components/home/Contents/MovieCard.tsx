@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import StarIcon from "@mui/icons-material/Star";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
-import { languageMap } from "../../../../constants/LanguageMap.ts";
+import { languageMap } from "@/app/constants/LanguageMap";
 import { useNavigate } from "react-router-dom";
 
 interface MovieCardProps {

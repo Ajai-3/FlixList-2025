@@ -1,4 +1,4 @@
-import apiClient from "@/api/axios"
+import apiClient from "@/app/api/axios"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { formatReleaseDate } from "../../../../utils/formatDate";
+import { formatReleaseDate } from "@/app/utils/formatDate";
 import MetaInfoDiv from "./MetaInfoDiv";
-import { countryMap } from "../../../../constants/countryMap";
-import { languageMap } from "../../../../constants/LanguageMap";
-import { formatRuntime } from "../../../../utils/formatRuntime";
-import { getCrewInfo } from "../../../../api/GetCrewInfo";
+import { countryMap } from "@/app/constants/countryMap";
+import { languageMap } from "@/app/constants/LanguageMap";
+import { formatRuntime } from "@/app/utils/formatRuntime";
+import { getCrewInfo } from "@/app/api/GetCrewInfo";
 
 interface MediaDetailsProps {
   media: any;

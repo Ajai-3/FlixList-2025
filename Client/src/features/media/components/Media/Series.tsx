@@ -1,13 +1,14 @@
 import React, { useRef } from 'react'
 import SeriesDiv from './SeriesDiv';
-import LeftArrowButton from '../Contents/LeftArrowButton';
-import RightArrowButton from '../Contents/RightArrowButton';
+import LeftArrowButton from '@/components/home/Contents/LeftArrowButton';
+import RightArrowButton from '@/components/home/Contents/RightArrowButton';
 
 
 interface MediaDetailsProps {
     media: any;
+    onSeasonClick: (seasonNumber: number) => void;
   }
-const Series: React.FC<MediaDetailsProps> = ({ media }) => {
+const Series: React.FC<MediaDetailsProps> = ({ media, onSeasonClick }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   
     const scroll = (direction: "left" | "right") => {
@@ -34,7 +35,7 @@ const Series: React.FC<MediaDetailsProps> = ({ media }) => {
       </div>
      <div ref={scrollRef} className='flex gap-10 p-4 justify-start overflow-auto scrollbar-hidden'>
        {media.seasons.map((season: any, i: any) => (
-        <SeriesDiv key={season.id || i} season={season} />
+        <SeriesDiv key={season.id || i} season={season} onClick={() => onSeasonClick(season.season_number)} />
     ))}
     </div>
    </div>

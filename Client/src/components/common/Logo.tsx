@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 // import logo from "../../assets/Logo/logl-2.png"
-import logo from "../../../../public/assets/Logo/logo-1.png"
+import logo from "../../public/assets/Logo/logo-1.png"
 import { useNavigate } from 'react-router-dom'
 
 const Logo: React.FC = () => {

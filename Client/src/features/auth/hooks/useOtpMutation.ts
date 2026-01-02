@@ -1,9 +1,9 @@
-import apiClient from "@/api/axios";
+import apiClient from "@/app/api/axios";
 import toast from "react-hot-toast";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch } from "@/app/redux/hooks";
 import { useMutation } from "@tanstack/react-query";
-import { setUser } from "@/redux/slices/userSlice";
-import { User } from "@/types/user";
+import { setUser } from "@/app/redux/slices/userSlice";
+import { User } from "@/app/types/user";
 import { useNavigate } from "react-router-dom";
 
 interface OtpResponse {

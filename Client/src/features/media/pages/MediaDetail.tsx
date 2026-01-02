@@ -1,16 +1,17 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LoadingSkeleton from "../components/Media/LoadingSkeleton";
-import axiosInstance from "../../../api/AxiosInstance";
-import Navbar from "../components/Navbar/Navbar";
-import Footer from "../components/Footer/Footer";
-import Hero from "../components/Hero/Hero";
+import axiosInstance from "@/app/api/AxiosInstance";
+import Hero from "@/components/home/Hero/Hero";
 import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
 import { motion } from "framer-motion";
 import Cast from "../components/Media/Cast";
-import { getCast } from "../../../api/GetCast";
+import { getCast } from "@/app/api/GetCast";
+import Footer from "@/components/common/Footer/Footer";
+import MediaViewer from "../components/Media/MediaViewer";
+
 
 const MediaDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
@@ -46,7 +47,17 @@ const MediaDetail: React.FC = () => {
     fetchMediaDetails();
   }, [type, id]);
 
+
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [viewerSeason, setViewerSeason] = useState<number | undefined>(undefined);
+
+  const openViewer = (seasonNumber?: number) => {
+    setViewerSeason(seasonNumber);
+    setIsViewerOpen(true);
+  };
+
   return (
+
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -57,13 +68,20 @@ const MediaDetail: React.FC = () => {
         <LoadingSkeleton />
       ) : (
         <div>
-          <Navbar />
           <Hero media={media} />
-            <Details media={media} />
+            <Details media={media} onPlay={() => openViewer()} />
             <MediaMetaInfo media={media} />
-            {media.seasons ? <Series media={media} /> : ""}
+            {media.seasons ? <Series media={media} onSeasonClick={openViewer} /> : ""}
             <Cast cast={cast} />
-          <Footer media={media} />
+            <Footer media={media} />
+            
+            <MediaViewer 
+              media={media}
+              isOpen={isViewerOpen}
+              onClose={() => setIsViewerOpen(false)}
+              initialSeason={viewerSeason}
+            />
+
         </div>
       )}
     </motion.div>

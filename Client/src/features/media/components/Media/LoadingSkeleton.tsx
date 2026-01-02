@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../Navbar/Navbar';
+import Navbar from '@/components/common/Navbar';
 
 const LoadingSkeleton: React.FC = () => {
   return (

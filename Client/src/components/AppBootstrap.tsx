@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import AppLoader from "./AppLoader";
-import { useAppDispatch } from "../redux/hooks";
-import { useBootstrap } from "../hooks/useBootstrap";
-import { logout, setUser } from "../redux/slices/userSlice";
-import { adminLogout, setAdmin } from "../redux/slices/adminSlice";
+import { useAppDispatch } from "../app/redux/hooks";
+import { useBootstrap } from "../app/hooks/useBootstrap";
+import { logout, setUser } from "../app/redux/slices/userSlice";
+import { adminLogout, setAdmin } from "../app/redux/slices/adminSlice";
 
 export const AppBootstrap = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();

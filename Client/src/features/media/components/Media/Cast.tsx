@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import CastDiv from "./CastDiv";
-import LeftArrowButton from "../Contents/LeftArrowButton";
-import RightArrowButton from "../Contents/RightArrowButton";
+import LeftArrowButton from "@/components/home/Contents/LeftArrowButton";
+import RightArrowButton from "@/components/home/Contents/RightArrowButton";
 
 interface CastMember {
   id: number;

@@ -6,17 +6,18 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { GiLemon } from "react-icons/gi";
 import { IoIosHeart } from "react-icons/io";
-import { languageMap } from "../../../../constants/LanguageMap";
-import { formatRuntime } from "../../../../utils/formatRuntime";
-import { formatVoteCount } from "../../../../utils/formatVoteCount";
-import { formatReleaseDate } from "../../../../utils/formatDate";
-import axiosInstance from "../../../../api/AxiosInstance";
+import { languageMap } from "@/app/constants/LanguageMap";
+import { formatRuntime } from "@/app/utils/formatRuntime";
+import { formatVoteCount } from "@/app/utils/formatVoteCount";
+import { formatReleaseDate } from "@/app/utils/formatDate";
+import axiosInstance from "@/app/api/AxiosInstance";
 
 interface MediaProps {
   media: any;
+  onPlay?: () => void;
 }
 
-const Details: React.FC<MediaProps> = ({ media }) => {
+const Details: React.FC<MediaProps> = ({ media, onPlay }) => {
   const [loading, setLoading] = useState(true);
   const [showTrailer, setShowTrailer] = useState(false);
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
@@ -220,11 +221,12 @@ const Details: React.FC<MediaProps> = ({ media }) => {
 
   // ✅ Open episode selection or provider selection based on media type
   const handlePlayClick = () => {
-    if (media.first_air_date) {
-      // For TV shows: show episode selection first
+    if (onPlay) {
+      onPlay();
+    } else if (media.first_air_date) {
+      // Fallback
       setShowEpisodeSelection(true);
     } else {
-      // For movies: directly show provider selection
       setShowPlayerModal(true);
     }
   };

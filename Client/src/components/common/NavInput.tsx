@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
-import { searchMedia } from "../../../../api/SearchMedia";
-import { languageMap } from "../../../../constants/LanguageMap";
-import { getRatingColor } from "../../../../utils/getRatingColor";
+import { searchMedia } from "@/app/api/SearchMedia";
+import { languageMap } from "@/app/constants/LanguageMap";
+import { getRatingColor } from "@/app/utils/getRatingColor";
 import { useNavigate } from "react-router-dom";
 
 const NavInput: React.FC = () => {
