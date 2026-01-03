@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 
@@ -32,30 +31,8 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
     { icon: <FaInstagram />, path: "#", label: "Instagram" },
   ];
 
-  const footerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
-
   return (
-    <footer className="relative w-full text-white pt-16 px-16 pb-6 overflow-hidden bg-black mt-32">
+    <footer className="relative w-full text-white pt-16 px-16 pb-2 overflow-hidden bg-black mt-32">
       {/* Background Image Container */}
       <div
         className="absolute inset-0 z-0"
@@ -69,55 +46,49 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
       />
       <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-black to-transparent z-10"></div>
 
-      <div className="container mx-auto relative z-10">
-        <motion.div
-          className="flex justify-between absolute top-16 left-0 right-0 z-50"
-          variants={footerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+      <div className="container mx-auto relative z-10 flex flex-col items-center py-6">
+        <div
+          className="w-full flex justify-between relative z-50 animate-fade-in mb-0"
         >
           {/* Logo & Social */}
-          <motion.div variants={itemVariants}>
+          <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
             <h2 className="text-4xl font-bold mb-4 tracking-wider">FlixList</h2>
             <p className="text-gray-400 mb-6 leading-relaxed">
               Your ultimate destination for discovering movies and TV shows.
             </p>
             <div className="flex space-x-5">
               {socialLinks.map((link, index) => (
-                <motion.a
+                <a
                   key={index}
                   href={link.path}
                   aria-label={link.label}
-                  className="text-gray-400 hover:text-main-color-2 text-2xl transition-all duration-300"
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="text-gray-400 hover:text-main-color-2 text-2xl transition-all duration-300 hover:scale-125 hover:text-white"
                 >
                   {link.icon}
-                </motion.a>
+                </a>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Quick Links */}
-          <motion.div variants={itemVariants}>
+          <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
             <h3 className="text-xl font-semibold mb-4 z-50">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
-                <motion.li key={index} whileHover={{ scale: 1.05 }}>
+                <li key={index} className="transition-transform duration-200 hover:scale-105">
                   <a
                     href={link.path}
                     className="text-gray-400 hover:text-main-color-2 transition-colors items-center gap-2 block"
                   >
                     {link.name}
                   </a>
-                </motion.li>
+                </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
           {/* Contact Info */}
-          <motion.div variants={itemVariants}>
+          <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
             <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-4">
               {contactInfo.map((info, index) => (
@@ -130,91 +101,77 @@ const Footer: React.FC<MediaProps> = ({ media }) => {
                 </li>
               ))}
             </ul>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        {/* Text Masking Effect with letter-shaped borders */}
-        <motion.div
-          className="relative top-44 flex items-center justify-center mb-6"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
+        {/* Middle Section: Large Text (Centered in flow) */}
+        <div
+          className="relative flex items-center justify-center animate-fade-in my-0"
+          style={{ animationDelay: '1s' }}
         >
-          <motion.h1
-            className="text-5xl mt-10 md:text-[340px] font-extrabold uppercase tracking-wide leading-tight relative"
-            initial={{ opacity: 0.4, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            {/* Text with image background */}
-            <span
-              className="absolute inset-0 text-transparent bg-clip-text"
-              style={{
-                backgroundImage: `url('${imageUrl}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                WebkitBackgroundClip: "text",
-                backgroundAttachment: "fixed",
-                filter: "contrast(1.1) brightness(1.1)",
-              }}
+          <div className="relative">
+            <h1
+              className="text-5xl md:text-[340px] font-extrabold uppercase tracking-wide leading-none relative select-none"
             >
-              FlixList
-            </span>
-
-            {/* Text with stroke/border effect */}
-            <motion.div
-              className="relative inline-block overflow-hidden"
-              whileHover="hover"
-              initial="initial"
-            >
-              <motion.span
-                className="block text-transparent"
+              {/* Text with image background */}
+              <span
+                className="absolute inset-0 text-transparent bg-clip-text"
                 style={{
-                  WebkitTextStroke: "2px rgba(128, 128, 128, 0.15)",
+                  backgroundImage: `url('${imageUrl}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  WebkitBackgroundClip: "text",
+                  backgroundAttachment: "fixed",
+                  filter: "contrast(1.1) brightness(1.1)",
                 }}
               >
                 FlixList
-              </motion.span>
+              </span>
 
-              <motion.span
-                className="absolute top-0 left-0 text-transparent"
-                style={{
-                  WebkitTextStroke: "2px rgba(200, 200, 200, 0.3)",
-                }}
-                variants={{
-                  initial: {
-                    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
-                  },
-                  hover: {
-                    clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-                    transition: {
-                      duration: 0.8,
-                      ease: [0.22, 1, 0.36, 1],
-                    },
-                  },
-                }}
-              >
-                FlixList
-              </motion.span>
-            </motion.div>
-          </motion.h1>
-        </motion.div>
+              {/* Text with stroke/border effect */}
+              <div className="relative inline-block group">
+                <span
+                  className="block text-transparent transition-all duration-700 ease-in-out"
+                  style={{
+                    WebkitTextStroke: "2px rgba(128, 128, 128, 0.15)",
+                  }}
+                >
+                  FlixList
+                </span>
 
-        {/* Footer Bottom */}
-        <motion.div
-          className="text-center text-gray-500 text-sm space-y-2"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
+                <span
+                  className="absolute top-0 left-0 text-transparent transition-all duration-1000 ease-out clip-path-top group-hover:clip-path-full"
+                  style={{
+                    WebkitTextStroke: "2px rgba(200, 200, 200, 0.3)",
+                   }}
+                >
+                  FlixList
+                </span>
+              </div>
+            </h1>
+          </div>
+        </div>
+
+        {/* Bottom Section: Copyright */}
+        <div
+          className="text-center text-gray-500 text-sm animate-fade-in"
+          style={{ animationDelay: '1.5s' }}
         >
           <p>© {new Date().getFullYear()} FlixList. All rights reserved.</p>
           <p>
             Powered by TMDB API. This product uses the TMDB API but is not
             endorsed or certified by TMDB.
           </p>
-        </motion.div>
+        </div>
       </div>
+      <style>{`
+        .clip-path-top {
+          clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+        }
+        .group:hover .clip-path-full {
+          clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+      `}</style>
     </footer>
   );
 };
