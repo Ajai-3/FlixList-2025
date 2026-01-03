@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import FormError from "@/components/ui/FormError";
-import Input from "../../../../components/ui/Input";
+import Input from "@/components/ui/Input";
 import CustomLoader from "@/components/CustomLoader";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "../../../../components/ui/Button";
-import Checkbox from "../../../../components/ui/Checkbox";
-import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
-import { useLoginMutation } from "../../hooks/auth/useLoginMutation";
-import { loginSchema, LoginInput } from "../../validation/auth/login.schema";
+import Button from "@/components/ui/Button";
+import Checkbox from "@/components/ui/Checkbox";
+import AuthPageWrapper from "@/features/auth/components/AuthPageWrapper";
+import { useLoginMutation } from "@/features/auth/hooks/useLoginMutation";
+import { loginSchema, LoginInput } from "@/features/auth/validation/login.schema";
 
 const Login: React.FC = () => {
   const [serverError, setServerError] = useState<string>("");

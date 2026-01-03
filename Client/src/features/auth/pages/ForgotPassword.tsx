@@ -2,16 +2,16 @@ import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import FormError from "@/components/ui/FormError";
 import React, { useState, useEffect } from "react";
-import Input from "../../../../components/ui/Input";
-import Button from "../../../../components/ui/Button";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AuthLinkLine from "@/components/ui/AuthLinkLine";
-import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
-import { useForgotPasswordMutation } from "../../hooks/auth/useForgotPasswordMutation";
+import AuthPageWrapper from "@/features/auth/components/AuthPageWrapper";
+import { useForgotPasswordMutation } from "@/features/auth/hooks/useForgotPasswordMutation";
 import {
   ForgotPasswordInput,
   forgotPasswordSchema,
-} from "../../validation/auth/forgotPassword.shcema";
+} from "../validation/forgotPassword.schema";
 import CustomLoader from "@/components/CustomLoader";
 
 const COOLDOWN_SECONDS = 120;

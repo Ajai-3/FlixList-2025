@@ -2,14 +2,14 @@ import { Shield } from "lucide-react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import FormError from "@/components/ui/FormError";
-import Input from "../../../../components/ui/Input";
+import Input from "@/components/ui/Input";
 import CustomLoader from "@/components/CustomLoader";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "../../../../components/ui/Button";
-import { useOtpMutation } from "../../hooks/auth/useOtpMutation";
-import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
-import { otpSchema, OtpInput } from "../../validation/auth/otp.schema";
-import { useResendOtpMutation } from "../../hooks/auth/useResendOtpMutation";
+import Button from "@/components/ui/Button";
+import { useOtpMutation } from "@/features/auth/hooks/useOtpMutation";
+import AuthPageWrapper from "@/features/auth/components/AuthPageWrapper";
+import { otpSchema, OtpInput } from "@/features/auth/validation/otp.schema";
+import { useResendOtpMutation } from "@/features/auth/hooks/useResendOtpMutation";
 
 const OTPPage: React.FC = () => {
   const otpMutation = useOtpMutation();

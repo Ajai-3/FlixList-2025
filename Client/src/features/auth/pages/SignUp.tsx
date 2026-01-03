@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import FormError from "@/components/ui/FormError";
-import Input from "../../../../components/ui/Input";
+import Input from "@/components/ui/Input";
 import CustomLoader from "@/components/CustomLoader";
-import Button from "../../../../components/ui/Button";
+import Button from "@/components/ui/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
-import { useRegisterMutation } from "../../hooks/auth/useRegisterMutation";
+import AuthPageWrapper from "@/features/auth/components/AuthPageWrapper";
+import { useRegisterMutation } from "@/features/auth/hooks/useRegisterMutation";
 import {
   RegisterInput,
   registerSchema,
-} from "../../validation/auth/register.schema";
+} from "@/features/auth/validation/register.schema";
 import { useNavigate } from "react-router-dom";
 
 const SignUp: React.FC = () => {

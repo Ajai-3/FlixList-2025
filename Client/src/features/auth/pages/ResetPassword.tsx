@@ -1,10 +1,10 @@
 import { Shield } from "lucide-react";
 import React, { useState } from "react";
 import FormError from "@/components/ui/FormError";
-import Input from "../../../../components/ui/Input";
-import Button from "../../../../components/ui/Button";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import AuthLinkLine from "@/components/ui/AuthLinkLine";
-import AuthPageWrapper from "../../components/auth/AuthPageWrapper";
+import AuthPageWrapper from "@/features/auth/components/AuthPageWrapper";
 
 const ResetPassword: React.FC = () => {
   const [passwords, setPasswords] = useState({
