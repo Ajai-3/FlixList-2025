@@ -6,7 +6,6 @@ import Hero from "@/components/home/Hero/Hero";
 import Details from "../components/Media/Details";
 import MediaMetaInfo from "../components/Media/MediaMetaInfo";
 import Series from "../components/Media/Series";
-import { motion } from "framer-motion";
 import Cast from "../components/Media/Cast";
 import { getCast } from "@/app/api/GetCast";
 import Footer from "@/components/common/Footer/Footer";
@@ -58,11 +57,8 @@ const MediaDetail: React.FC = () => {
 
   return (
 
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+    <div
+      className="animate-fade-in transition-opacity duration-300"
     >
       {isLoading || !media ? (
         <LoadingSkeleton />
@@ -84,7 +80,7 @@ const MediaDetail: React.FC = () => {
 
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

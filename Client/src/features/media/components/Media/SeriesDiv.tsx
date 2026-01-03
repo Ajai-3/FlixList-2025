@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface SeriesDivProps {
   season: {
@@ -30,74 +29,46 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season, onClick }) => {
     : `Season ${season.season_number}`;
 
   return (
-    <motion.div
-      className="relative w-36 cursor-pointer"
+    <div
+      className="relative w-36 cursor-pointer animate-fade-in hover:scale-105 transition-transform duration-300"
       onClick={onClick}
-      whileHover={{
-        scale: 1.05,
-        transition: { type: "spring", stiffness: 300, damping: 10 }
-      }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
     >
       {/* Image Container */}
       <div className="relative h-56 w-36 rounded-xl overflow-hidden bg-gray-800 shadow-lg">
         {/* Loading State */}
         {loading && (
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center bg-gray-800/80 z-10"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{ 
-              opacity: 0,
-              transition: { duration: 0.3, ease: "easeInOut" }
-            }}
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-gray-800/80 z-10 animate-fade-in"
           >
-            <motion.div
-              className="w-8 h-8 border-2 border-main-color-2 border-t-transparent rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            <div
+              className="w-8 h-8 border-2 border-main-color-2 border-t-transparent rounded-full animate-spin"
             />
-          </motion.div>
+          </div>
         )}
 
         {/* Actual Image */}
         {!imageError && season.poster_path ? (
-          <motion.img
+          <img
             src={`https://image.tmdb.org/t/p/w300${season.poster_path}`}
-            className="absolute inset-0 w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-in-out ${
+              loading ? "opacity-0 scale-95" : "opacity-100 scale-100"
+            }`}
             alt={seasonDisplayName}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ 
-              opacity: loading ? 0 : 1,
-              scale: loading ? 0.95 : 1
-            }}
-            transition={{ 
-              opacity: { duration: 0.5, ease: "easeInOut" },
-              scale: { duration: 0.7, ease: "easeOut" }
-            }}
           />
         ) : (
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center bg-gray-700 text-gray-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-gray-700 text-gray-400 animate-fade-in"
           >
             No Image
-          </motion.div>
+          </div>
         )}
       </div>
 
       {/* Season Info */}
-      <motion.div 
-        className="mt-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
+      <div 
+        className="mt-2 animate-fade-in delay-200"
       >
         <div className="flex justify-between items-center w-36">
           <p className="font-medium truncate text-white text-sm">{seasonDisplayName}</p>
@@ -105,8 +76,8 @@ const SeriesDiv: React.FC<SeriesDivProps> = ({ season, onClick }) => {
             {season.episode_count} {season.episode_count === 1 ? 'Episode' : 'Episodes'}
           </p>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
