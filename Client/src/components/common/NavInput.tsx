@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { motion } from "framer-motion";
 import { searchMedia } from "@/app/api/SearchMedia";
 import { languageMap } from "@/app/constants/LanguageMap";
 import { getRatingColor } from "@/app/utils/getRatingColor";
@@ -76,56 +75,26 @@ const NavInput: React.FC = () => {
       .slice(0, 10);
   }, [results]);
 
-  const inputVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, delay: 0.1, type: "spring", stiffness: 200 }
-    },
-    focus: {
-      scale: 1.03,
-      borderColor: "#00e90e",
-      boxShadow: "0 0 10px rgba(0, 233, 14, 0.5)",
-      transition: { duration: 0.3, type: "spring" }
-    }
-  };
-
   return (
-    <div className="relative" ref={wrapperRef}>
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        className="relative"
-      >
-        <motion.input
-          whileFocus="focus"
-          variants={inputVariants}
-          className="bg-black/70 relative outline-none border border-gray-500 p-[10px] rounded-md w-96"
+    <div className="relative animate-fade-in" ref={wrapperRef}>
+      <div className="relative">
+        <input
+          className="bg-black/70 relative outline-none border border-gray-500 p-[10px] rounded-md w-96 focus:scale-[1.03] focus:border-main-color-1 focus:shadow-[0_0_10px_rgba(0,233,14,0.5)] transition-all duration-300"
           type="text"
           placeholder="Search...."
           value={searchQuery}
           onChange={handleSearch}
         />
         {isLoading && (
-          <motion.div
-            className="absolute right-3 top-1/2 -translate-y-1/2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 animate-fade-in">
             <div className="w-5 h-5 border-2 border-main-color-2 border-t-transparent rounded-full animate-spin"></div>
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
 
       {searchQuery && (filteredResults.length > 0 || hasSearched || error) && (
-        <motion.div
-          className="absolute scrollbar-hidden bg-black/95 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.2 }}
+        <div
+          className="absolute scrollbar-hidden bg-black/95 w-96 max-h-[500px] mt-1 overflow-y-auto rounded-md shadow-lg z-50 animate-slide-down origin-top"
         >
           {error ? (
             <div className="p-4 text-center text-red-400">
@@ -137,12 +106,9 @@ const NavInput: React.FC = () => {
             </div>
           ) : filteredResults.length > 0 ? (
             filteredResults.map((media) => (
-              <motion.div
+              <div
                 key={`${media.id}-${media.media_type}`}
-                className="flex gap-4 p-3 hover:bg-gray-800/50 transition-colors cursor-pointer"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
+                className="flex gap-4 p-3 hover:bg-gray-800/50 transition-colors cursor-pointer animate-fade-in"
                 onClick={() => handleResultClick(media.media_type, media.id)}
               >
                 <div className="w-24 shrink-0">
@@ -175,14 +141,14 @@ const NavInput: React.FC = () => {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))
           ) : (
             <div className="p-4 text-center text-gray-400">
               No results found for "{searchQuery}"
             </div>
           )}
-        </motion.div>
+        </div>
       )}
     </div>
   );

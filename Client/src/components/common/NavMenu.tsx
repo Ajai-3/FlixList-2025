@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 
 const NavMenu: React.FC = () => {
     const [active, setActive] = useState("Home")
@@ -9,22 +8,14 @@ const NavMenu: React.FC = () => {
   return (
     <div className="flex list-none text-md font-semibold gap-4">
       {navLists.map((item, i) => (
-        <motion.li
+        <li
         onClick={() => setActive(item)}
           key={i}
-          className={`cursor-pointer  tracking-wider hover:text-main-color-2 ${active === item ? "text-main-color-2" : ""}`}
-          whileHover={{ scale: 1.1 }}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.1,
-            delay: i * 0.1,
-            type: "spring",
-            stiffness: 200,
-          }}
+          className={`cursor-pointer tracking-wider hover:text-main-color-2 hover:scale-110 transition-all duration-300 ${active === item ? "text-main-color-2" : ""} animate-slide-down`}
+          style={{ animationDelay: `${i * 0.1}s` }}
         >
           {item.toUpperCase()}
-        </motion.li>
+        </li>
       ))}
     </div>
   );
