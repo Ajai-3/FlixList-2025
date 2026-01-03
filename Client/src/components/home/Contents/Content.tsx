@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import MovieCard from "./MovieCard";
-import { motion } from "framer-motion";
 import LeftArrowButton from "./LeftArrowButton";
 import RightArrowButton from "./RightArrowButton";
 import ViewAllButton from "./ViewAllButton";
@@ -142,19 +141,10 @@ const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivE
   return (
     <div className="relative -mt-56 px-10">
       {mediaSections.map((section, i) => (
-        <motion.div
+        <div
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{
-            duration: 0.5,
-            type: "spring",
-            stiffness: 200,
-          }}
+          className="animate-fade-in"
+          style={{ animationDelay: `${i * 0.2}s` }}
         >
           <div className="flex justify-between items-center">
             <h1 className="text-2xl mx-4 font-semibold">{section.heading}</h1>
@@ -192,7 +182,7 @@ const handleScroll = (direction: "left" | "right", ref: React.RefObject<HTMLDivE
               )}
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

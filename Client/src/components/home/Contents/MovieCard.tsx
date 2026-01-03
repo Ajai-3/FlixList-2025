@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import StarIcon from "@mui/icons-material/Star";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { languageMap } from "@/app/constants/LanguageMap";
@@ -59,111 +58,65 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   };
 
   return (
-    <motion.div
+    <div
       onClick={handleDetails}
-      className="relative shrink-0 rounded-xl cursor-pointer w-48"
+      className="relative shrink-0 rounded-xl cursor-pointer w-48 group transition-transform duration-300 hover:scale-105 active:scale-95 animate-fade-in"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{
-        scale: 1.05,
-        transition: { type: "spring", stiffness: 200, damping: 8 },
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, type: "tween" }}
     >
       <div className="overflow-hidden rounded-xl relative">
-        {/* Loading Skeleton - Using a more subtle loading animation */}
+        {/* Loading Skeleton */}
         {loading && (
-          <motion.div
-            className="absolute inset-0 bg-gray-900 z-10"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{
-              opacity: 0,
-              transition: { duration: 0.3, ease: "easeOut" },
-            }}
+          <div
+            className="absolute inset-0 bg-gray-900 z-10 animate-fade-in"
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div
-                className="w-6 h-6 border-2 border-main-color-2 border-t-transparent rounded-full"
-                animate={{
-                  rotate: 360,
-                }}
-                transition={{
-                  duration: 0.8,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+              <div
+                className="w-6 h-6 border-2 border-main-color-2 border-t-transparent rounded-full animate-spin"
               />
             </div>
-          </motion.div>
+          </div>
         )}
 
-        <motion.div
-          className="relative w-full h-72"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: imageLoaded ? 1 : 0,
-            transition: { duration: 0.4, ease: "easeInOut" },
-          }}
+        <div
+          className={`relative w-full h-72 transition-opacity duration-500 ease-in-out ${
+            imageLoaded ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <motion.img
+          <img
             src={`https://image.tmdb.org/t/p/w780${movie.poster_path}`}
             alt={movie.title || movie.name || "Movie poster"}
-            className="w-full h-full object-cover rounded-xl"
-            initial={{ scale: 0.98 }}
-            animate={{
-              scale: isHovered ? 1.05 : 1,
-              transition: {
-                duration: 0.3,
-                ease: "easeOut",
-              },
-            }}
+            className="w-full h-full object-cover rounded-xl transition-transform duration-300 ease-out group-hover:scale-105"
             onLoad={handleImageLoad}
           />
-        </motion.div>
+        </div>
 
         {/* Bottom Gradient */}
-        <motion.div
-          className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-gray-900 to-transparent rounded-b-xl"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: loading ? 0 : 1,
-            transition: { delay: 0.3 },
-          }}
+        <div
+          className={`absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-gray-900 to-transparent rounded-b-xl transition-opacity duration-300 ${
+            loading ? "opacity-0" : "opacity-100"
+          }`}
+          style={{ transitionDelay: '300ms' }}
         />
 
         {/* Bookmark Button */}
-        <motion.div
-          className="absolute top-2 right-2 p-1 bg-gray-900/80 rounded-full z-20"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+        <div
+          className={`absolute top-2 right-2 p-1 bg-gray-900/80 rounded-full z-20 transition-all duration-200 hover:scale-110 active:scale-90 ${
+            loading ? "opacity-0" : "opacity-100"
+          }`}
+          style={{ transitionDelay: '400ms' }}
           onClick={(e) => {
             e.stopPropagation();
           }}
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: loading ? 0 : 1,
-            transition: { delay: 0.4 },
-          }}
         >
           <BookmarksIcon className="text-white" fontSize="small" />
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 m-2 z-10"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{
-            y: loading ? 20 : 0,
-            opacity: loading ? 0 : 1,
-            transition: {
-              delay: 0.5,
-              duration: 0.5,
-              ease: "easeOut",
-            },
-          }}
+        <div
+          className={`absolute bottom-0 left-0 right-0 m-2 z-10 transition-all duration-500 ease-out ${
+            loading ? "translate-y-5 opacity-0" : "translate-y-0 opacity-100"
+          }`}
+          style={{ transitionDelay: '500ms' }}
         >
           <div className="text-xs flex gap-2 flex-wrap">
             <p className="bg-black/50 px-2 rounded-full">
@@ -183,20 +136,16 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           <p className="w-full truncate text-lg font-semibold tracking-wider mt-1">
             {movie.title || movie.name}
           </p>
-        </motion.div>
+        </div>
       </div>
 
       {/* Hover Overlay */}
-      {isHovered && (
-        <motion.div
-          className="absolute inset-0 bg-green-500/20 rounded-xl pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        />
-      )}
-    </motion.div>
+      <div
+        className={`absolute inset-0 bg-green-500/20 rounded-xl pointer-events-none transition-opacity duration-200 ${
+          isHovered ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
   );
 };
 
